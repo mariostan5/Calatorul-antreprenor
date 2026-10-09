@@ -1,0 +1,178 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/sections/Nav.astro';
+import Footer from '../components/sections/Footer.astro';
+
+// the community photos that roll on the reel in the cabin
+const photos = await Promise.all(
+  (await getCollection('community'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (p) => ({ src: (await getImage({ src: p.data.image, width: 640, format: 'webp' })).src, destination: p.data.destination, caption: p.data.caption })),
+);
+
+type Action = { t: string; href?: string; go?: number; gold?: boolean };
+// span = screen-heights of scroll the chapter takes (the flight in from the hero, the community's photos)
+type Chapter = { id: string; num: string; name: string; l1: string; l2: string; sub?: string; align?: 'right'; hero?: boolean; span?: number; actions: Action[] };
+// one chapter per stop of the flight (src/scripts/journey.ts: STOPS); each stop's thing in the picture opens its page
+const chapters: Chapter[] = [
+  // the hero: the title above the jet and the way in, centred at the bottom
+  { id: 'zbor', num: 'I', name: 'Decolarea', l1: 'Călătorește', l2: 'ca un antreprenor.', hero: true, span: 2, actions: [{ t: 'Urcă la bord', go: 1 }] },
+  {
+    id: 'comunitate', num: 'II', name: 'Comunitatea', l1: 'Comunitatea', l2: 'te așteaptă.', align: 'right', span: 3,
+    actions: [{ t: 'Intră în comunitate', href: '/comunitate', gold: true }],
+  },
+  {
+    id: 'club', num: 'III', name: 'Clubul', l1: 'Clubul', l2: 'la bord.',
+    sub: 'Hoteluri de 4–5★ la prețuri de membru, peste 2.000 de destinații și excursii de grup aproape în fiecare lună.',
+    actions: [{ t: 'Descoperă clubul', href: '/club' }],
+  },
+  {
+    id: 'academie', num: 'IV', name: 'Academia', l1: 'Academia', l2: 'din lounge.',
+    sub: 'Workshop-uri live în fiecare săptămână: marketing, vânzări, comunicare și AI.',
+    actions: [{ t: 'Vezi workshop-urile', href: '/business-class#academie' }],
+  },
+  {
+    id: 'destinatii', num: 'V', name: 'Destinații', l1: 'Următoarea', l2: 'destinație.',
+    sub: 'Plecări în grup, alături de comunitate. Apasă pe ecran și vezi unde zburăm.',
+    actions: [{ t: 'Toate destinațiile', href: '/destinatii' }],
+  },
+];
+---
+<Base>
+  <!-- decide before first paint whether the 3D flight can run (avoids a flash of the stacked fallback) -->
+  <script is:inline>
+    try { if (document.createElement('canvas').getContext('webgl2')) document.documentElement.classList.add('xp-on'); } catch (e) {}
+  </script>
+  <div class="xp" data-photos={JSON.stringify(photos)} aria-hidden="true">
+    <canvas class="xp-canvas"></canvas>
+    <div class="xp-shade"></div>
+  </div>
+  <!-- the logo comes out of the clouds, then lands in the nav -->
+  <div class="intro" aria-hidden="true">
+    <video class="intro-base" src="/hero/clouds.mp4" poster="/hero/clouds.webp" autoplay muted loop playsinline></video>
+    <div class="intro-veil"></div>
+    <div class="intro-mark">
+      <div class="intro-logo"></div>
+      <p class="intro-name">Călătorul Antreprenor</p>
+    </div>
+    <img class="intro-front l" src="/hero/puff.webp" alt="" />
+    <img class="intro-front r" src="/hero/puff.webp" alt="" />
+  </div>
+  <div class="xp-exit" aria-hidden="true"></div>
+  <div class="xp-veil" aria-hidden="true"></div>
+  <span class="xp-tip label" aria-hidden="true"></span>
+  <!-- the hint on the door you go through next -->
+  <p class="xp-door" aria-hidden="true"><i></i><span class="label">Mai departe</span><b></b><span class="label">Scroll ↓</span></p>
+
+  <Nav />
+  <main class="chapters">
+    {chapters.map((c, i) => {
+      const H = i === 0 ? 'h1' : 'h2';
+      return (
+        <section class="ch" id={c.id} data-num={c.num} data-name={c.name} data-align={c.align} data-hero={c.hero ? '' : undefined} style={`--span: ${c.span ?? 1}`}>
+          <div class="ch-inner">
+            {!c.hero && <p class="ch-kicker label">(Cap. {c.num}) · {c.name}</p>}
+            <H class="ch-title"><span class="ch-line ch-l1">{c.l1}</span><span class="ch-line ch-l2">{c.l2}</span></H>
+            {c.sub && <p class="ch-sub">{c.sub}</p>}
+            <div class="ch-actions">
+              {c.actions.map((a) => a.go !== undefined
+                ? <button class="btn btn-line" type="button" data-go={a.go}>{a.t}</button>
+                : <a class:list={['btn', a.gold ? 'btn-gold' : 'btn-line']} href={a.href} data-magnetic>{a.t}</a>)}
+            </div>
+          </div>
+        </section>
+      );
+    })}
+  </main>
+  <Footer />
+</Base>
+
+<style is:global>
+  /* ---------- the flight, fixed behind everything (no WebGL: the first frame as a backdrop) ---------- */
+  .xp { position: fixed; inset: 0; z-index: 0; background: var(--ink) url(/hero/jet.webp) center / cover; }
+  .xp-canvas { width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
+  .xp.ready .xp-canvas { opacity: 1; }
+  /* keeps the titles readable over the bright white cabin: darker on the side the words sit */
+  .xp-shade { position: absolute; inset: 0; pointer-events: none; transition: opacity .8s; background:
+    linear-gradient(90deg, rgba(4, 11, 31, .78), rgba(4, 11, 31, .38) 40%, rgba(4, 11, 31, 0) 64%),
+    linear-gradient(180deg, rgba(4, 11, 31, .5), rgba(4, 11, 31, 0) 20%, rgba(4, 11, 31, 0) 75%, rgba(4, 11, 31, .55)); }
+  .xp[data-chapter="0"] .xp-shade, .xp[data-chapter="-1"] .xp-shade { background:
+    linear-gradient(180deg, rgba(4, 11, 31, .55), rgba(4, 11, 31, .2) 30%, rgba(4, 11, 31, 0) 50%, rgba(4, 11, 31, 0) 80%, rgba(4, 11, 31, .45)); }
+  .xp[data-align="right"] .xp-shade { background:
+    linear-gradient(270deg, rgba(4, 11, 31, .78), rgba(4, 11, 31, .38) 40%, rgba(4, 11, 31, 0) 64%),
+    linear-gradient(180deg, rgba(4, 11, 31, .5), rgba(4, 11, 31, 0) 20%, rgba(4, 11, 31, 0) 75%, rgba(4, 11, 31, .55)); }
+
+  /* ---------- intro: the logo condenses out of drifting clouds ---------- */
+  .intro { position: fixed; inset: 0; z-index: 90; display: none; place-items: center; overflow: hidden; }
+  .js .intro { display: grid; }
+  .intro-base { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; scale: 1.15; }
+  .intro-veil { position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 48%, rgba(250, 252, 255, .88), rgba(236, 244, 252, .5) 70%, rgba(220, 234, 248, .25)); }
+  .intro-mark { position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .intro-logo { width: clamp(150px, 13vw, 210px); aspect-ratio: 345 / 280; background: var(--royal);
+    -webkit-mask: url(/logo-mark.png) center / contain no-repeat; mask: url(/logo-mark.png) center / contain no-repeat; }
+  .intro-name { font-family: var(--mono); font-size: 13px; letter-spacing: .32em; text-transform: uppercase; color: var(--royal); }
+  .intro-front { position: absolute; top: 50%; width: 95vw; max-width: none; translate: 0 -50%; opacity: .95;
+    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); }
+  .intro-front.l { left: -38vw; }
+  .intro-front.r { right: -38vw; scale: -1 1; }
+  /* the nav waits for the logo to land */
+  .js .nav-brand img, .js .nav-brand span, .js .nav-links a, .js .nav-cta { opacity: 0; }
+
+  .xp-exit { position: fixed; inset: 0; z-index: 80; background: var(--cream); opacity: 0; visibility: hidden; pointer-events: none; }
+  .xp-tip { position: fixed; left: 0; top: 0; z-index: 60; padding: 8px 14px; border-radius: 999px; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none; transition: opacity .3s; }
+  .xp-tip.on { opacity: 1; }
+
+  /* ---------- chapters: in the flow they give the scroll its length; on top they are titles at the side ---------- */
+  .chapters { position: relative; z-index: 1; }
+  .ch { min-height: calc(var(--span, 1) * 100vh); display: grid; place-items: center; padding: 120px var(--pad); }
+  .xp-on .chapters { pointer-events: none; }
+  /* the film is one screen: the chapters' titles sit on top of it, the page only scrolls on to the footer */
+  .xp-on .chapters { height: 100vh; }
+  .xp-on .ch { min-height: 0; height: 0; padding: 0; }
+  .xp-lock, .xp-lock body { overflow: hidden; }
+  .xp-veil { position: fixed; inset: 0; z-index: 3; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; }
+  .xp-on .ch-inner { position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 var(--pad) 0 7vw; text-align: left; }
+  .ch-inner { max-width: 100%; }
+  .ch-inner a, .ch-inner button { pointer-events: auto; }
+  .ch-kicker { color: var(--gold); margin-bottom: 24px; }
+  .xp-on [data-align="right"] .ch-inner { align-items: flex-end; text-align: right; padding: 0 7vw 0 var(--pad); }
+  [data-align="right"] .ch-title { align-items: flex-end; }
+  [data-align="right"] .ch-actions { justify-content: flex-end; }
+  /* hero: title centred in the sky above the jet, the button centred at the bottom */
+  .xp-on [data-hero] .ch-inner { align-items: center; justify-content: flex-start; text-align: center; padding: 12vh var(--pad) 0; }
+  [data-hero] .ch-title { align-items: center; }
+  [data-hero] .ch-l1 { font-size: clamp(34px, 4vw, 72px); }
+  [data-hero] .ch-l2 { font-size: clamp(44px, 5.3vw, 100px); }
+  .xp-on [data-hero] .ch-actions { position: absolute; left: 0; right: 0; bottom: 44px; justify-content: center; margin: 0; }
+  .ch-title .ln-mask { padding-bottom: .2em; margin-bottom: -.2em; }
+  .ch-title { display: flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .92; text-shadow: 0 2px 30px rgba(4, 11, 31, .35); }
+  .ch-l1 { font-family: var(--sans); font-weight: 300; font-size: clamp(38px, 4.6vw, 84px); letter-spacing: .01em; text-transform: uppercase; }
+  .ch-l2 { font-family: var(--serif); font-weight: 500; font-size: clamp(50px, 6.2vw, 118px); letter-spacing: -.015em; }
+  .ch-sub { max-width: 40ch; margin-top: 24px; font-size: clamp(16px, 1.2vw, 19px); color: rgba(243, 238, 228, .9); text-wrap: balance; text-shadow: 0 2px 20px rgba(4, 11, 31, .8); }
+  .ch-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+  .btn-line { border-color: rgba(216, 192, 138, .7); color: var(--cream); background: rgba(4, 11, 31, .25); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .btn-line:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+  /* ---------- the hint on the next door: a breathing ring, the next chapter's name ---------- */
+  .xp-door { position: fixed; left: 0; top: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; margin: -26px 0 0 -90px; width: 180px; text-align: center; color: var(--cream); text-shadow: 0 1px 14px rgba(4, 11, 31, .7); opacity: 0; pointer-events: none; transition: opacity .6s; }
+  .xp-door.on { opacity: 1; }
+  .xp-door i { width: 52px; height: 52px; margin-bottom: 8px; border-radius: 50%; border: 1px solid rgba(243, 238, 228, .9); background: rgba(4, 11, 31, .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: door-ring 2.2s var(--ease-out) infinite; }
+  .xp-door b { font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1; }
+  .xp-door .label { color: rgba(243, 238, 228, .85); }
+  @keyframes door-ring { 0% { box-shadow: 0 0 0 0 rgba(243, 238, 228, .55); } 100% { box-shadow: 0 0 0 22px rgba(243, 238, 228, 0); } }
+
+  /* the home page keeps its bottom edge clear */
+  .wa { display: none !important; }
+
+  /* no WebGL: the chapters simply stack over the first frame */
+  .no-xp .xp-canvas { display: none; }
+</style>
+
+<script>
+  import { startIntro } from '../scripts/hero';
+  const introDone = startIntro();
+  // three.js loads after the page is on screen, so the initial JS stays small
+  if (document.documentElement.classList.contains('xp-on')) import('../scripts/journey').then((m) => m.startJourney(introDone));
+</script>

@@ -1,0 +1,44 @@
+---
+import { Picture } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/sections/Nav.astro';
+import Footer from '../../components/sections/Footer.astro';
+import { config } from '../../config';
+
+export async function getStaticPaths() {
+  return (await getCollection('destinations')).map((d) => ({ params: { slug: d.id }, props: { d } }));
+}
+const { d } = Astro.props;
+const date = (x: Date) => x.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title={`${d.data.name} · Călătorul Antreprenor`} description={`${d.data.name}, ${d.data.country}: ${d.data.summary}`}>
+  <Nav />
+  <main class="page">
+    <section class="trip-hero">
+      <div class="trip-img" data-img><Picture src={d.data.image} formats={['avif', 'webp']} widths={[800, 1280]} sizes="100vw" alt={`${d.data.name}, ${d.data.country}`} loading="eager" fetchpriority="high" /></div>
+      <div class="trip-copy">
+        <span class="label kicker">Excursie de grup · {d.data.country}</span>
+        <h1 class="h2" data-split>{d.data.name}</h1>
+        <p class="num trip-date">{date(d.data.start)} – {date(d.data.end)}</p>
+        <p>{d.data.summary}</p>
+        <div class="trip-actions">
+          <a class="btn btn-gold" href={config.webinarUrl} data-magnetic>Află cum vii cu noi</a>
+          <a class="btn btn-ghost" href="/destinatii">Toate destinațiile</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style is:global>
+  .page { padding: 120px var(--pad) 16vh; background: var(--navy); }
+  .trip-hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(40px, 6vw, 100px); align-items: center; max-width: 1400px; margin: 0 auto; }
+  .trip-img { border-radius: 24px; overflow: hidden; aspect-ratio: 4 / 3; }
+  .trip-img img { width: 100%; height: 100%; object-fit: cover; }
+  .trip-copy > p { margin-top: 18px; max-width: 44ch; color: rgba(243, 238, 228, .76); font-size: 18px; }
+  .trip-date { color: var(--gold) !important; font-size: 14px !important; }
+  .trip-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+  @media (max-width: 767px) { .trip-hero { grid-template-columns: 1fr; } }
+</style>

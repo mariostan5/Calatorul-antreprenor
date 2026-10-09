@@ -1,0 +1,65 @@
+---
+import { config } from '../../config';
+import { PLANE, ARROW } from '../ui/icons';
+
+const passes = [
+  { href: config.webinarUrl, cls: '', tag: 'Boarding pass · Pentru vacanțe', from: 'Acasă', to: 'Club', title: 'Webinar gratuit', when: 'Joi · 21:00', go: 'Rezervă locul' },
+  { href: '#academie', cls: 'fpass-biz', tag: 'Boarding pass · Business Class', from: 'Azi', to: 'Business', title: 'Workshop Business Class', when: 'Marți · 19:00', go: 'Vezi workshop-urile' },
+];
+---
+<section class="final" id="final">
+  <div class="final-head">
+    <span class="label kicker">Pasul următor</span>
+    <h2 class="h2" data-split>Alege-ți zborul.</h2>
+  </div>
+  <div class="final-grid">
+    {passes.map((p, i) => (
+      <>
+        {i === 1 && (
+          <div class="final-hub" aria-hidden="true">
+            <span class="hub-ring"><svg class="hub-plane" viewBox="0 0 24 24"><path d={PLANE} /></svg></span>
+            <span class="label">sau</span>
+          </div>
+        )}
+        <a class={`fpass ${p.cls}`} href={p.href} data-reveal>
+          <div class="fp-top"><span class="label">{p.tag}</span><img src="/logo-mark.png" alt="" width="345" height="280" /></div>
+          <div class="fp-route"><div><span class="label">De la</span><b>{p.from}</b></div><i></i><div><span class="label">Spre</span><b>{p.to}</b></div></div>
+          <h3>{p.title}</h3>
+          <div class="fp-meta"><div><span class="label">Când</span><b>{p.when}</b></div><div><span class="label">Poarta</span><b>Online</b></div><div><span class="label">Loc</span><b>Gratuit</b></div></div>
+          <span class="fp-go">{p.go} <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d={ARROW} /></svg></span>
+        </a>
+      </>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .final { padding: 22vh var(--pad) 26vh; }
+  .final-head { margin-bottom: 9vh; text-align: center; }
+  .final-grid { display: grid; grid-template-columns: 1fr 150px 1fr; align-items: center; max-width: 1240px; margin: 0 auto; }
+  .final-hub { display: flex; flex-direction: column; align-items: center; gap: 14px; color: rgba(243, 238, 228, .6); }
+  .hub-ring { width: 84px; height: 84px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(216, 192, 138, .5); background: var(--navy); transition: box-shadow .8s; }
+  .hub-plane { width: 30px; height: 30px; fill: var(--gold); transform: rotate(180deg); }
+  .fpass { display: block; padding: 28px 30px 26px; border-radius: 20px; background: var(--cream); color: var(--ink); box-shadow: 0 50px 110px rgba(0, 0, 0, .45); transition: translate .8s var(--ease-out); }
+  .fpass:hover { translate: 0 -8px; }
+  .fp-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(4, 11, 31, .12); }
+  .fp-top .label { font-size: 10px; color: rgba(4, 11, 31, .6); }
+  .fp-top img { width: auto; height: 26px; filter: brightness(0); opacity: .75; }
+  .fp-route { display: flex; align-items: center; gap: 16px; padding: 18px 0 4px; }
+  .fp-route .label { display: block; font-size: 10px; color: rgba(4, 11, 31, .55); }
+  .fp-route b { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 2.4vw, 40px); line-height: 1; }
+  .fp-route i { flex: 1; border-top: 1px dashed rgba(4, 11, 31, .3); }
+  .fp-route > div:last-child { text-align: right; }
+  .fpass h3 { margin: 14px 0 18px; font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 2.2vw, 34px); line-height: 1.05; color: var(--royal); }
+  .fp-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0; border-top: 2px dashed rgba(4, 11, 31, .16); }
+  .fp-meta .label { display: block; font-size: 9.5px; color: rgba(4, 11, 31, .55); }
+  .fp-meta b { font-family: var(--mono); font-weight: 500; font-size: 14px; }
+  .fp-go { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px; padding: 16px; border-radius: 999px; background: var(--royal); color: var(--cream); font-weight: 600; transition: background-color .3s; }
+  .fpass:hover .fp-go { background: var(--navy); }
+  .fpass-biz { background: linear-gradient(160deg, var(--cream), color-mix(in srgb, var(--cream) 78%, var(--gold))); }
+  .fpass-biz .fp-go { background: var(--ink); color: var(--gold); }
+  @media (max-width: 900px) {
+    .final-grid { grid-template-columns: 1fr; gap: 22px; max-width: 520px; }
+    .final-hub { order: -1; margin-bottom: 10px; }
+  }
+</style>

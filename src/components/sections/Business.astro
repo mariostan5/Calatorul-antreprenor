@@ -1,0 +1,94 @@
+---
+const pillars = [
+  { n: '01', title: 'Învață', fact: '4 workshop-uri live / lună', text: 'Marketing, vânzări, comunicare, social media și AI, în sesiuni practice. Plus întrebări cu experți.' },
+  { n: '02', title: 'Construiește', fact: 'Plan pe 90 de zile', text: 'Un plan pas cu pas, făcut după obiectivul tău și după timpul pe care îl ai la dispoziție.' },
+  { n: '03', title: 'Crește', fact: '1 mentor dedicat', text: 'Sprijin constant de la oameni care au parcurs drumul, într-o comunitate care crește împreună.' },
+];
+---
+<section class="biz" id="business">
+  <div class="biz-stage">
+    <div class="biz-intro">
+      <span class="label kicker">Business Class</span>
+      <h2 class="h2">Pentru cei care vor mai mult decât vacanțe.</h2>
+      <p class="biz-lead">Aceeași comunitate, un alt ritm: înveți, construiești și crești, alături de oameni care au făcut deja drumul.</p>
+    </div>
+    <div class="curtain" aria-hidden="true">
+      <div class="curtain-l"></div><div class="curtain-r"></div>
+      <span class="curtain-label label">Business Class · Doar membri</span>
+    </div>
+  </div>
+  <div class="biz-body">
+    <ol class="biz-pillars">
+      {pillars.map((p, i) => (
+        <li data-reveal>
+          <b class="num">{p.n}</b>
+          <h3>{p.title}</h3>
+          <span class="biz-fact num">{p.fact}</span>
+          <p>{p.text}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="biz-cta" data-reveal><a class="btn btn-gold" href="#academie" data-magnetic>Rezervă un workshop gratuit</a></div>
+    <p class="income-note" data-reveal>
+      Rezultatele diferă de la om la om și depind de timpul și efortul investit.
+      <a href="/nota-venituri">Nota despre venituri</a>
+    </p>
+  </div>
+</section>
+
+<style is:global>
+  /* from here on: deep navy, fine gold, more room, half the speed */
+  .biz-stage { position: relative; isolation: isolate; height: 100vh; overflow: hidden; display: grid; place-items: center; padding: 0 var(--pad); }
+  .biz-intro { max-width: 1050px; text-align: center; }
+  .biz-lead { max-width: 46ch; margin: 28px auto 0; color: rgba(243, 238, 228, .72); font-size: clamp(16px, 1.25vw, 20px); }
+  /* the cabin curtain: two heavy panels, folds drawn with gradients, gathered as they open */
+  .curtain { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+  .curtain > div {
+    position: absolute; top: 0; bottom: 0; width: 50.5%;
+    background:
+      linear-gradient(180deg, rgba(216, 192, 138, .14), transparent 8%, transparent 80%, rgba(4, 11, 31, .55)),
+      repeating-linear-gradient(90deg, rgba(4, 11, 31, .9) 0, rgba(11, 30, 79, .55) 22px, rgba(243, 238, 228, .06) 30px, rgba(11, 30, 79, .5) 40px, rgba(4, 11, 31, .9) 62px),
+      var(--navy);
+    border-top: 3px solid var(--gold);
+    box-shadow: inset 0 -60px 80px rgba(4, 11, 31, .6), 0 0 90px rgba(0, 0, 0, .8);
+  }
+  .curtain-l { left: 0; transform-origin: 0 50%; box-shadow: inset -30px 0 60px rgba(4, 11, 31, .7), 0 0 90px rgba(0, 0, 0, .8) !important; }
+  .curtain-r { right: 0; transform-origin: 100% 50%; box-shadow: inset 30px 0 60px rgba(4, 11, 31, .7), 0 0 90px rgba(0, 0, 0, .8) !important; }
+  .curtain-label { position: absolute; left: 50%; top: 50%; translate: -50% -50%; padding: 14px 24px; border: 1px solid rgba(216, 192, 138, .6); background: var(--ink); color: var(--gold); white-space: nowrap; }
+  /* without JS the curtain stays open */
+  html:not(.js) .curtain { display: none; }
+
+  .biz-body { position: relative; isolation: isolate; max-width: 1400px; margin: 0 auto; padding: 14vh var(--pad) 26vh; }
+  .biz-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(40px, 6vw, 120px); }
+  .biz-pillars li { padding: 34px 0 0; border-top: 1px solid rgba(216, 192, 138, .4); }
+  .biz-pillars li:nth-child(2) { margin-top: 12vh; }
+  .biz-pillars b { font-weight: 400; font-size: 13px; letter-spacing: .16em; color: var(--gold); }
+  .biz-pillars h3 { margin: 18px 0 10px; font-family: var(--serif); font-weight: 500; font-size: clamp(48px, 4.6vw, 84px); line-height: .9; letter-spacing: -.03em; }
+  .biz-fact { display: inline-block; margin-bottom: 18px; padding: 6px 12px; border: 1px solid rgba(216, 192, 138, .35); border-radius: 999px; font-size: 12px; color: var(--gold); }
+  .biz-pillars p { max-width: 36ch; color: rgba(243, 238, 228, .72); }
+  .biz-cta { margin-top: 14vh; text-align: center; }
+  .income-note { max-width: 54ch; margin: 28px auto 0; text-align: center; font-size: 13px; color: rgba(243, 238, 228, .6); }
+  .income-note a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 767px) {
+    .biz-pillars { grid-template-columns: 1fr; gap: 48px; }
+    .biz-pillars li:nth-child(2) { margin-top: 0; }
+    .biz-body { padding: 10vh var(--pad) 18vh; }
+  }
+</style>
+
+<script>
+  import { gsap, reducedMotion, isMobile } from '../../scripts/animations/motion';
+
+  // the stage holds while the curtain opens with the scroll
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: '.biz-stage', start: 'top top', end: isMobile() ? '+=70%' : '+=120%', scrub: 1, pin: true, refreshPriority: 1 },
+  });
+  if (reducedMotion()) {
+    tl.to('.curtain', { autoAlpha: 0, duration: 1 });
+  } else {
+    tl.to('.curtain-label', { opacity: 0, scale: 0.94, duration: 0.25 }, 0)
+      .to('.curtain-l', { scaleX: isMobile() ? 0.06 : 0.14, duration: 1, ease: 'power3.inOut' }, 0.1)
+      .to('.curtain-r', { scaleX: isMobile() ? 0.06 : 0.14, duration: 1, ease: 'power3.inOut' }, 0.1)
+      .from('.biz-intro > *', { y: 50, opacity: 0, duration: 0.6, stagger: 0.12, ease: 'expo.out' }, 0.45);
+  }
+</script>

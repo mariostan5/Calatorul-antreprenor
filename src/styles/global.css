@@ -1,0 +1,73 @@
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { interpolate-size: allow-keywords; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+em, i { font-style: normal; }
+img, video, canvas { display: block; max-width: 100%; }
+/* <picture> steps aside so its <img> sizes against the real container */
+picture { display: contents; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+ol, ul { list-style: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+::selection { background: var(--gold); color: var(--ink); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- type ---------- */
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.label { font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; }
+.kicker { display: inline-block; color: var(--gold); }
+.h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(42px, 6vw, 112px); line-height: .98; letter-spacing: -.015em; text-wrap: balance; }
+.h2-md { font-size: clamp(38px, 4.4vw, 80px); }
+.kicker + .h2 { margin-top: 16px; }
+.muted { color: rgba(243, 238, 228, .68); }
+/* SplitText line masks: room for descenders and diacritics */
+.ln-mask { padding-bottom: .12em; margin-bottom: -.12em; }
+
+/* ---------- buttons ---------- */
+.btn {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 15px 26px; border-radius: 999px; border: 1px solid transparent;
+  font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer;
+  transition: color .5s var(--ease-out), border-color .5s, background-color .5s;
+}
+/* gold: a cream fill rises from below on hover */
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-gold::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--cream); transform: translateY(101%); transition: transform .6s var(--ease-out); }
+.btn-gold:hover::before { transform: none; }
+.btn-ghost { border-color: rgba(243, 238, 228, .45); background: rgba(4, 11, 31, .25); color: var(--cream); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.btn-ghost:hover { border-color: var(--cream); background: rgba(243, 238, 228, .12); }
+
+/* ---------- sections sit over the jet ---------- */
+main { position: relative; z-index: 1; overflow-x: clip; }
+main > section, .calm > section { position: relative; isolation: isolate; }
+
+/* ---------- WhatsApp ---------- */
+.wa {
+  position: fixed; right: 18px; bottom: 18px; z-index: 45; width: 50px; height: 50px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--cream);
+  background: rgba(7, 20, 51, .7); border: 1px solid rgba(216, 192, 138, .45);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .35); transition: transform .6s var(--ease-out), opacity .4s, background-color .4s;
+}
+.wa:hover { background: #1f8f4e; border-color: transparent; }
+.js .wa:not(.show) { transform: scale(.5); opacity: 0; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+@view-transition { navigation: auto; }

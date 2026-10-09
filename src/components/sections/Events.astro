@@ -1,0 +1,158 @@
+---
+import { getCollection } from 'astro:content';
+import { config } from '../../config';
+
+const TZ = 'Europe/Bucharest';
+const now = new Date();
+// past events drop out at build time, and again in the browser (the site may be built days earlier)
+const events = (await getCollection('events'))
+  .filter((e) => e.data.type === 'workshop' && e.data.start > now)
+  .sort((a, b) => +a.data.start - +b.data.start)
+  .slice(0, 6);
+const ro = (d: Date, o: Intl.DateTimeFormatOptions) => d.toLocaleString('ro-RO', { timeZone: TZ, ...o });
+---
+<section class="events" id="academie">
+  <div class="events-head">
+    <span class="label kicker">Academie & evenimente</span>
+    <h2 class="h2" data-split>Următoarele zboruri.</h2>
+  </div>
+  <div class="events-grid">
+    <div class="webinar-card" data-reveal>
+      <span class="live-chip label"><i></i>Live în fiecare joi</span>
+      <h3>Webinar gratuit</h3>
+      <p>Afli cum funcționează clubul, ce primești ca membru și cum arată partea de Business Class. Durează aproximativ 45 de minute.</p>
+      <div class="cd" role="timer" aria-label="Timp rămas până la următorul webinar live">
+        <div><b class="num" data-cd="d">–</b><span>zile</span></div><div><b class="num" data-cd="h">–</b><span>ore</span></div><div><b class="num" data-cd="m">–</b><span>min</span></div><div><b class="num" data-cd="s">–</b><span>sec</span></div>
+      </div>
+      <p class="label cd-when">Joi, 21:00 ora României<span data-local></span></p>
+      <a class="btn btn-gold" href={config.webinarUrl} data-magnetic>Rezervă-ți locul</a>
+    </div>
+    <div class="passes">
+      {events.map((e, i) => (
+        <article class:list={['pass', { extra: i > 2 }]} data-start={e.data.start.toISOString()} tabindex="0">
+          <div class="pass-main">
+            <span class="label">Workshop gratuit · {e.data.location}</span>
+            <h4>{e.data.title}</h4>
+            <dl class="pass-meta">
+              <div><dt class="label">Data</dt><dd class="num">{ro(e.data.start, { day: '2-digit', month: 'short' })} · {ro(e.data.start, { weekday: 'short' })}</dd></div>
+              <div><dt class="label">Ora</dt><dd class="num">{ro(e.data.start, { hour: '2-digit', minute: '2-digit' })} RO<span class="pass-local" data-local-time></span></dd></div>
+              <div><dt class="label">Trainer</dt><dd>{e.data.trainer}</dd></div>
+              <div><dt class="label">Locuri</dt><dd class="num">{e.data.seatsLeft} rămase</dd></div>
+            </dl>
+          </div>
+          <div class="pass-stub">
+            <span class="label">Zbor</span>
+            <b class="num">CA-{String(i + 1).padStart(3, '0')}</b>
+            <a class="pass-go" href={e.data.url}>Rezervă</a>
+          </div>
+          <span class="pass-stamp" aria-hidden="true">Confirmat</span>
+        </article>
+      ))}
+      <p class="passes-empty label" hidden={events.length > 0}>Calendarul se actualizează în curând.</p>
+      <p class="label passes-note">Titluri și date de exemplu · se înlocuiesc cu calendarul real</p>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .events { padding: 24vh var(--pad); }
+  .events-head { text-align: center; margin-bottom: 10vh; }
+  .events-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(80px, 8vw, 140px); max-width: 1400px; margin: 0 auto; align-items: start; }
+  .webinar-card { padding: clamp(28px, 3vw, 44px); border-radius: 24px; background: linear-gradient(160deg, rgba(11, 30, 79, .8), rgba(4, 11, 31, .9)); border: 1px solid rgba(216, 192, 138, .3); box-shadow: 0 50px 100px rgba(0, 0, 0, .35); }
+  .live-chip { display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 999px; background: rgba(243, 238, 228, .08); }
+  .live-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: live 1.8s infinite; }
+  @keyframes live { 0% { box-shadow: 0 0 0 0 rgba(216, 192, 138, .6); } 70%, 100% { box-shadow: 0 0 0 10px rgba(216, 192, 138, 0); } }
+  .webinar-card h3 { margin: 20px 0 12px; font-family: var(--serif); font-weight: 500; font-size: clamp(38px, 3.4vw, 60px); line-height: 1; }
+  .webinar-card > p { color: rgba(243, 238, 228, .74); }
+  .cd { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 28px 0 14px; }
+  .cd div { padding: 14px 6px 10px; border: 1px solid rgba(243, 238, 228, .16); border-radius: 10px; text-align: center; background: rgba(4, 11, 31, .45); }
+  .cd b { display: block; font-weight: 400; font-size: clamp(28px, 2.6vw, 40px); line-height: 1.05; }
+  .cd span { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(243, 238, 228, .62); }
+  .cd-when { margin-bottom: 26px; color: var(--gold); }
+  .cd-when span { color: rgba(243, 238, 228, .65); }
+
+  .passes { display: flex; flex-direction: column; gap: 20px; }
+  .pass { position: relative; display: grid; grid-template-columns: 1fr 120px; border-radius: 16px; background: var(--cream); color: var(--ink); box-shadow: 0 20px 50px rgba(0, 0, 0, .3); transition: translate .8s var(--ease-out), box-shadow .8s; }
+  .pass.extra { display: none; }
+  .pass:hover, .pass:focus-within, .pass:focus-visible { translate: 0 -6px; box-shadow: 0 36px 70px rgba(0, 0, 0, .4); }
+  .pass-main { padding: 20px 24px; border-right: 2px dashed rgba(4, 11, 31, .18); }
+  .pass-main > .label { font-size: 10px; color: rgba(4, 11, 31, .6); }
+  .pass h4 { margin: 6px 0 14px; font-family: var(--serif); font-weight: 600; font-size: clamp(24px, 2vw, 30px); line-height: 1.1; }
+  .pass-meta { display: grid; grid-template-columns: repeat(4, auto); gap: 10px 18px; }
+  .pass-meta dt { font-size: 9px; color: rgba(4, 11, 31, .55); }
+  .pass-meta dd { font-size: 13px; }
+  .pass-local { display: block; color: rgba(4, 11, 31, .6); }
+  .pass-stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 16px 10px; }
+  .pass-stub .label { font-size: 9px; color: rgba(4, 11, 31, .55); }
+  .pass-stub b { font-weight: 500; font-size: 16px; }
+  .pass-go { margin-top: 8px; padding: 8px 16px; border-radius: 999px; background: var(--ink); color: var(--gold); font-weight: 600; font-size: 13px; }
+  /* hover: the pass gets stamped */
+  .pass-stamp { position: absolute; right: 136px; top: 18px; padding: 5px 12px; border: 2px solid var(--royal); border-radius: 6px; color: var(--royal); font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: rotate(-12deg) scale(1.8); transition: transform .6s var(--ease-out), opacity .3s; pointer-events: none; }
+  .pass:hover .pass-stamp, .pass:focus-within .pass-stamp, .pass:focus-visible .pass-stamp { opacity: .85; transform: rotate(-12deg) scale(1); }
+  .passes-note, .passes-empty { color: rgba(243, 238, 228, .5); text-align: right; }
+  @media (max-width: 900px) {
+    .events-grid { grid-template-columns: 1fr; gap: 32px; }
+    .pass { grid-template-columns: 1fr; }
+    .pass-main { border-right: 0; border-bottom: 2px dashed rgba(4, 11, 31, .18); }
+    .pass-meta { grid-template-columns: 1fr 1fr; }
+    .pass-stub { flex-direction: row; justify-content: space-between; padding: 12px 18px; }
+    .pass-go { margin: 0; }
+    .pass-stamp { right: 18px; }
+    .passes-note, .passes-empty { text-align: left; }
+  }
+</style>
+
+<script>
+  import { $, $$, gsap, ScrollTrigger, reducedMotion, pace } from '../../scripts/animations/motion';
+
+  const TZ = 'Europe/Bucharest';
+  const parts = (t: number) => Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: TZ, hourCycle: 'h23', weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }).formatToParts(t).map((p) => [p.type, p.value]));
+  // how far Romanian clocks are ahead of UTC at moment t, in ms
+  const roOffset = (t: number) => { const p = parts(t); return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute) - Math.floor(t / 6e4) * 6e4; };
+  // next Thursday 21:00 in Romania (offset checked on the day itself, so DST weeks are right)
+  function nextWebinar(now = Date.now()) {
+    const p = parts(now), dow = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday);
+    for (const extra of [0, 7]) {
+      const wall = Date.UTC(+p.year, +p.month - 1, +p.day + ((4 - dow + 7) % 7) + extra, 21);
+      const t = wall - roOffset(wall - roOffset(now));
+      if (t > now) return t;
+    }
+    return now;
+  }
+  const differs = (t: number) => roOffset(t) !== -new Date(t).getTimezoneOffset() * 6e4;
+  const local = (t: number, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('ro-RO', o).format(t);
+
+  // countdown
+  const at = nextWebinar(), cd = Object.fromEntries($$('[data-cd]').map((e) => [e.dataset.cd, e]));
+  if (differs(at)) $('[data-local]')!.textContent = ' · la tine: ' + local(at, { weekday: 'long', hour: '2-digit', minute: '2-digit' });
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const tick = () => {
+    const s = Math.max(0, Math.floor((at - Date.now()) / 1000));
+    cd.d.textContent = String((s / 86400) | 0); cd.h.textContent = pad(((s % 86400) / 3600) | 0); cd.m.textContent = pad(((s % 3600) / 60) | 0); cd.s.textContent = pad(s % 60);
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  // passes: hide past ones, keep the next three, add the visitor's own clock
+  const live = $$('.pass').filter((p) => {
+    const t = Date.parse(p.dataset.start!);
+    if (t <= Date.now()) { p.remove(); return false; }
+    return true;
+  });
+  live.forEach((p, i) => {
+    p.classList.toggle('extra', i > 2);
+    const t = Date.parse(p.dataset.start!);
+    if (differs(t)) $('[data-local-time]', p)!.textContent = 'la tine ' + local(t, { hour: '2-digit', minute: '2-digit' });
+  });
+  $('.passes-empty')!.hidden = live.length > 0;
+  ScrollTrigger.refresh();
+
+  // the passes arrive one by one (half speed: we are in Business Class)
+  const shown = live.slice(0, 3);
+  if (shown.length) {
+    const k = pace(shown[0]);
+    reducedMotion()
+      ? gsap.fromTo(shown, { opacity: 0 }, { opacity: 1, duration: 0.8, stagger: 0.15 })
+      : gsap.fromTo(shown, { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 1.2 * k, ease: 'expo.out', stagger: 0.14 * k, clearProps: 'transform,translate,rotate,scale', scrollTrigger: { trigger: '.passes', start: 'top 80%', once: true } });
+  }
+</script>

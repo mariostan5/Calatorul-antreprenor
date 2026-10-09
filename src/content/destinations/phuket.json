@@ -1,0 +1,9 @@
+{
+  "name": "Phuket",
+  "country": "Thailanda",
+  "image": "./phuket.jpg",
+  "start": "2027-01-19",
+  "end": "2027-01-24",
+  "summary": "Insule, ape turcoaz și apusuri pe plajă.",
+  "order": 6
+}

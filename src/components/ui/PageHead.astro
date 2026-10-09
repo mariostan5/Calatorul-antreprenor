@@ -1,0 +1,20 @@
+---
+interface Props { num: string; name: string; l1: string; l2: string; sub: string }
+const { num, name, l1, l2, sub } = Astro.props;
+---
+<header class="page-head">
+  <p class="label kicker">(Cap. {num}) · {name}</p>
+  <h1 class="page-title"><span class="page-l1" data-split>{l1}</span><span class="page-serif" data-split>{l2}</span></h1>
+  <p class="page-sub" data-reveal>{sub}</p>
+  <a class="page-back label" href="/">← Înapoi în avion</a>
+</header>
+
+<style is:global>
+  .page-head { max-width: 1400px; margin: 0 auto; padding: 22vh var(--pad) 10vh; }
+  .page-title { display: flex; flex-direction: column; margin: 22px 0 26px; font-weight: 400; line-height: .95; }
+  .page-l1 { font-family: var(--sans); font-weight: 300; font-size: clamp(40px, 5.4vw, 96px); text-transform: uppercase; }
+  .page-serif { font-family: var(--serif); font-weight: 500; font-size: clamp(52px, 7vw, 128px); letter-spacing: -.015em; }
+  .page-sub { max-width: 52ch; font-size: clamp(16px, 1.3vw, 20px); color: rgba(243, 238, 228, .78); }
+  .page-back { display: inline-block; margin-top: 34px; color: var(--gold); }
+  .page-body { background: radial-gradient(70% 40% at 80% 0%, rgba(11, 30, 79, .9), transparent 70%), var(--navy); }
+</style>

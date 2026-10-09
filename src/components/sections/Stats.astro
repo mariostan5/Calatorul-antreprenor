@@ -1,0 +1,52 @@
+---
+import { stats } from '../../data/stats';
+
+const fmt = (v: number) => v.toLocaleString('ro-RO');
+---
+<section class="stats" id="cifre">
+  <div class="stats-head">
+    <span class="label kicker">Ecranele de bord</span>
+    <h2 class="h2 h2-md" data-split>Un club care zboară deja.</h2>
+  </div>
+  <div class="stats-grid">
+    {stats.map((s, i) => (
+      <div class="screen">
+        <span class="label screen-top"><span>{String(i + 1).padStart(2, '0')}</span><i>LIVE</i></span>
+        <b class="screen-num" data-count={s.value} data-suffix={s.suffix}>{fmt(s.value) + s.suffix}</b>
+        <span class="screen-label">{s.label}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .stats { padding: 20vh var(--pad); }
+  .stats-head { max-width: 900px; margin: 0 auto 8vh; text-align: center; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(20px, 2.4vw, 36px); max-width: 1400px; margin: 0 auto; }
+  /* each number sits on a softly lit cabin screen */
+  .screen {
+    position: relative; display: flex; flex-direction: column; gap: 14px; padding: 22px 22px 26px; border-radius: 18px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(11, 30, 79, .72), rgba(4, 11, 31, .86));
+    border: 1px solid rgba(243, 238, 228, .12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 30px 70px rgba(0, 0, 0, .35);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(243, 238, 228, .025) 0 1px, transparent 1px 4px); }
+  .screen-top { display: flex; justify-content: space-between; color: rgba(243, 238, 228, .55); }
+  .screen-top i { display: flex; align-items: center; gap: 8px; color: var(--gold); }
+  .screen-top i::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+  /* the gold line drawn above each number (--s: 0 → 1) */
+  .screen-num { position: relative; padding-top: 18px; font-family: var(--mono); font-weight: 400; font-size: clamp(44px, 4.4vw, 76px); line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .screen-num::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--gold); transform: scaleX(var(--s, 1)); transform-origin: left; }
+  .js .screen-num::before { transform: scaleX(var(--s, 0)); }
+  .screen-label { color: rgba(243, 238, 228, .7); font-size: 15px; }
+  @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 767px) { .stats { padding: 14vh var(--pad); } .screen { padding: 16px 16px 20px; } .screen-num { font-size: 40px; } .screen-label { font-size: 13.5px; } }
+</style>
+
+<script>
+  import { $$, gsap, ScrollTrigger } from '../../scripts/animations/motion';
+
+  $$('.screen-num').forEach((el, i) =>
+    ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => gsap.to(el, { '--s': 1, duration: 1.4, delay: i * 0.1, ease: 'expo.out' }) }));
+</script>

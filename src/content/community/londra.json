@@ -1,0 +1,12 @@
+{
+  "image": "./londra.jpg",
+  "caption": "Eveniment tematic",
+  "destination": "Londra",
+  "year": 2024,
+  "order": 12,
+  "type": "eveniment",
+  "author": "Adrian N.",
+  "home": "Regatul Unit",
+  "date": "2024-11-30",
+  "text": "Seara tematică de la Londra. Am cunoscut oameni din cinci țări într-o singură seară."
+}

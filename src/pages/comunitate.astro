@@ -1,0 +1,383 @@
+---
+import { Picture } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/sections/Nav.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const posts = (await getCollection('community')).sort((a, b) => +b.data.date - +a.data.date);
+const places = [...new Set(posts.map((p) => p.data.destination))].sort((a, b) => a.localeCompare(b, 'ro'));
+const events = (await getCollection('events')).filter((e) => e.data.start > new Date()).sort((a, b) => +a.data.start - +b.data.start).slice(0, 3);
+const day = (d: Date) => d.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' });
+const ro = (d: Date, o: Intl.DateTimeFormatOptions) => d.toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest', ...o });
+const initials = (n: string) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+// a few photos for the drifting wall under the title
+const TILT = [-4, 3, -2, 5, -3, 2, -5, 3.5, -1.5, 4, -3.5, 2.5];
+const wall = posts.slice(0, 12);
+---
+<Base title="Comunitatea · Călătorul Antreprenor" description="Jurnalul de bord al comunității: poze din vacanțe, evenimente și oamenii cu care călătorești.">
+  <!-- arriving from a boarding pass on the home page: the pass tears and lets you in -->
+  <script is:inline>
+    try { if (sessionStorage.getItem('ca-from-ticket')) { sessionStorage.removeItem('ca-from-ticket'); document.documentElement.classList.add('from-ticket'); } } catch (e) {}
+  </script>
+  <div class="tear" aria-hidden="true">
+    <div class="tear-pass">
+      <div class="tear-main">
+        <span class="label">Boarding pass · Călătorul Antreprenor</span>
+        <b>Comunitatea</b>
+        <div class="tear-meta num"><span>Lounge → Lumea</span><span>Poarta 07</span><span>Loc 2C</span></div>
+      </div>
+      <div class="tear-stub num">CA<br />007</div>
+      <span class="tear-stamp">Îmbarcat</span>
+    </div>
+  </div>
+
+  <Nav />
+  <main class="cm">
+    <header class="cm-hero">
+      <p class="label kicker cm-in">(Lounge) · Comunitatea</p>
+      <h1 class="cm-title"><span class="cm-line">Jurnalul de bord</span><span class="cm-line cm-serif">al comunității.</span></h1>
+      <p class="cm-lead cm-in">Poze din vacanțe, momente de la evenimente și oamenii cu care călătorești. Postează și tu din zborul tău.</p>
+      <div class="cm-hero-row cm-in">
+        <p class="label num cm-stats">700+ membri · {posts.length} postări · {places.length} destinații</p>
+        <button class="btn btn-gold" type="button" data-compose data-magnetic>Postează</button>
+      </div>
+    </header>
+
+    <div class="cm-wall" aria-hidden="true">
+      <div class="cm-wall-track">
+        {[0, 1].map(() => wall.map((p, i) => (
+          <figure class="polaroid" style={`--r:${TILT[i]}deg`}>
+            <div class="photo"><Picture src={p.data.image} formats={['avif', 'webp']} widths={[320]} sizes="220px" alt="" loading="lazy" draggable="false" /></div>
+            <figcaption>{p.data.destination}</figcaption>
+          </figure>
+        )))}
+      </div>
+    </div>
+
+    <div class="cm-layout">
+      <section class="cm-feed" aria-label="Postări">
+        <div class="cm-tools">
+          <div class="cm-tabs" role="radiogroup" aria-label="Tip de postare">
+            {[['toate', 'Toate'], ['vacanta', 'Vacanțe'], ['eveniment', 'Evenimente']].map(([v, t], i) => (
+              <label><input type="radio" name="type" value={v} checked={i === 0} /><span>{t}</span></label>
+            ))}
+          </div>
+          <label class="cm-select"><span class="sr-only">Destinație</span>
+            <select name="place"><option value="">Toate destinațiile</option>{places.map((p) => <option value={p}>{p}</option>)}</select>
+          </label>
+        </div>
+        <div class="cm-grid">
+          {posts.map((p) => (
+            <article class="post" data-type={p.data.type} data-place={p.data.destination}>
+              <button class="post-media" type="button" aria-label={`Mărește poza: ${p.data.caption}`}>
+                <Picture src={p.data.image} formats={['avif', 'webp']} widths={[480, 900]} sizes="(max-width: 1100px) 45vw, 30vw" alt={`${p.data.caption}, ${p.data.destination}`} loading="lazy" />
+              </button>
+              <div class="post-body">
+                <header class="post-head">
+                  <span class="avatar">{initials(p.data.author)}</span>
+                  <div><b>{p.data.author}</b><span class="label">Din {p.data.home} · {day(p.data.date)}</span></div>
+                  <span class="post-tag label">{p.data.type === 'vacanta' ? 'Vacanță' : 'Eveniment'}</span>
+                </header>
+                <p>{p.data.text}</p>
+                <footer class="post-foot">
+                  <button class="like" type="button" aria-pressed="false"><span aria-hidden="true">♥</span> <span class="num" data-n>{(p.data.order * 7) % 40 + 6}</span><span class="sr-only"> aprecieri</span></button>
+                  <span class="label">{p.data.caption} · {p.data.destination}</span>
+                </footer>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p class="cm-empty label" hidden>Nicio postare pentru filtrul ales.</p>
+      </section>
+
+      <aside class="cm-aside">
+        <div class="cm-card">
+          <h2 class="label">Următoarele evenimente</h2>
+          {events.map((e) => (
+            <a class="mini-pass" href="/business-class#academie">
+              <span class="mini-date num"><b>{ro(e.data.start, { day: '2-digit' })}</b>{ro(e.data.start, { month: 'short' })}</span>
+              <span><b>{e.data.title}</b><span class="label">{ro(e.data.start, { hour: '2-digit', minute: '2-digit' })} RO · {e.data.location}</span></span>
+            </a>
+          ))}
+          {!events.length && <p class="label">Calendarul se actualizează în curând.</p>}
+        </div>
+        <div class="cm-card">
+          <h2 class="label">Regulile lounge-ului</h2>
+          <ol class="cm-rules">
+            <li>Postăm din călătorii și evenimente reale.</li>
+            <li>Vorbim cu respect, în orice limbă.</li>
+            <li>Fără reclame și fără promisiuni de câștig.</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <dialog class="composer" aria-labelledby="composer-title">
+    <form method="dialog" class="composer-form">
+      <header><h2 id="composer-title">Postare nouă</h2><button class="composer-x" type="button" value="cancel" aria-label="Închide">✕</button></header>
+      <label class="drop">
+        <input type="file" name="photo" accept="image/*" />
+        <span class="drop-hint">Alege o poză din vacanță sau de la eveniment</span>
+        <img class="drop-preview" alt="" hidden />
+      </label>
+      <label class="field"><span class="label">Ce vrei să povestești?</span><textarea name="text" rows="3" maxlength="500" required placeholder="Unde ai fost, cu cine, ce ți-a plăcut…"></textarea></label>
+      <div class="field-row">
+        <label class="field"><span class="label">Tip</span><select name="type"><option value="vacanta">Vacanță</option><option value="eveniment">Eveniment</option></select></label>
+        <label class="field"><span class="label">Destinație</span><input name="place" maxlength="40" required placeholder="ex. Bali" /></label>
+      </div>
+      <p class="composer-note">Demo: postarea apare doar pe acest dispozitiv. Postarea reală vine odată cu conturile de membru.</p>
+      <button class="btn btn-gold" type="submit" value="post">Publică</button>
+    </form>
+  </dialog>
+
+  <dialog class="lightbox" aria-label="Poză mărită">
+    <img alt="" />
+    <p class="lightbox-cap label"></p>
+    <button class="lightbox-x" type="button" aria-label="Închide">✕</button>
+  </dialog>
+
+  <Footer />
+</Base>
+
+<style is:global>
+  .cm { position: relative; padding-top: 130px; background: radial-gradient(70% 40% at 80% 0%, rgba(11, 30, 79, .9), transparent 70%), var(--navy); }
+  .cm-hero { max-width: 1400px; margin: 0 auto; padding: 8vh var(--pad) 4vh; }
+  .cm-title { display: flex; flex-direction: column; margin: 22px 0 26px; font-weight: 400; line-height: .95; }
+  .cm-title .cm-line:first-child { font-family: var(--sans); font-weight: 300; font-size: clamp(40px, 5.4vw, 96px); text-transform: uppercase; }
+  .cm-serif { font-family: var(--serif); font-weight: 500; font-size: clamp(52px, 7vw, 128px); letter-spacing: -.015em; }
+  .cm-lead { max-width: 52ch; font-size: clamp(16px, 1.3vw, 20px); color: rgba(243, 238, 228, .78); }
+  .cm-hero-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 34px; padding-top: 22px; border-top: 1px solid rgba(216, 192, 138, .3); }
+  .cm-stats { color: var(--gold); }
+
+  /* the drifting wall of polaroids */
+  .cm-wall { overflow: hidden; padding: 6vh 0 9vh; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .cm-wall.grabbing { cursor: grabbing; }
+  .cm-wall img { pointer-events: none; }
+  .cm-wall-track { display: flex; align-items: flex-start; width: max-content; will-change: transform; }
+  .polaroid { --r: 0deg; flex: none; width: 210px; margin-right: 40px; padding: 10px 10px 0; background: var(--cream); box-shadow: 0 18px 40px rgba(0, 0, 0, .45); transform: rotate(var(--r)); transition: transform .8s var(--ease-out); }
+  .polaroid:nth-child(odd) { margin-top: 26px; }
+  .polaroid:hover { transform: rotate(0deg) scale(1.06); }
+  .photo { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--royal); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+  .js .photo img { filter: brightness(.25) sepia(.9) saturate(.3) blur(3px); transition: filter 3s cubic-bezier(.3, .1, .2, 1); }
+  .js .polaroid.dev .photo img { filter: none; }
+  .polaroid figcaption { height: 46px; display: grid; place-items: center; font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--ink); }
+
+  /* feed + aside */
+  .cm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(40px, 5vw, 80px); max-width: 1400px; margin: 0 auto; padding: 0 var(--pad) 18vh; align-items: start; }
+  .cm-tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; margin-bottom: 28px; }
+  .cm-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: rgba(4, 11, 31, .5); border: 1px solid rgba(243, 238, 228, .12); }
+  .cm-tabs input { position: absolute; opacity: 0; pointer-events: none; }
+  .cm-tabs span { display: block; padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: rgba(243, 238, 228, .75); cursor: pointer; transition: background-color .4s, color .4s; }
+  .cm-tabs input:checked + span { background: var(--gold); color: var(--ink); }
+  .cm-tabs input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .cm-select select { height: 44px; padding: 0 40px 0 18px; border-radius: 999px; border: 1px solid rgba(243, 238, 228, .2); background: rgba(4, 11, 31, .5); color: var(--cream); font-size: 14px; }
+  .cm-select option { color: var(--ink); }
+  .cm-grid { columns: 2; column-gap: 26px; }
+  .post { break-inside: avoid; margin-bottom: 26px; border-radius: 20px; overflow: hidden; background: rgba(4, 11, 31, .55); border: 1px solid rgba(243, 238, 228, .1); }
+  .post[hidden] { display: none; }
+  .post-media { display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in; overflow: hidden; background: var(--royal); }
+  .post-media img { width: 100%; height: auto; transition: transform 1.4s var(--ease-out); }
+  .post-media:hover img { transform: scale(1.04); }
+  .post-body { padding: 18px 20px 16px; }
+  .post-head { display: flex; align-items: center; gap: 12px; }
+  .post-head b { display: block; font-size: 15px; }
+  .post-head .label { display: block; font-size: 10px; color: rgba(243, 238, 228, .55); letter-spacing: .12em; }
+  .avatar { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--gold); color: var(--ink); font-weight: 700; font-size: 13px; }
+  .post-tag { margin-left: auto; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(216, 192, 138, .45); color: var(--gold); font-size: 9.5px; }
+  .post-body > p { margin: 14px 0; color: rgba(243, 238, 228, .85); }
+  .post-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(243, 238, 228, .08); }
+  .post-foot .label { font-size: 10px; color: rgba(243, 238, 228, .5); text-align: right; }
+  .like { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(243, 238, 228, .18); background: none; cursor: pointer; transition: background-color .3s, border-color .3s, color .3s; }
+  .like[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .post-local { padding: 4px 10px; border-radius: 999px; background: var(--cream); color: var(--ink); font-size: 9.5px; }
+  .cm-empty { color: rgba(243, 238, 228, .6); }
+
+  .cm-aside { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 20px; }
+  .cm-card { padding: 22px; border-radius: 20px; background: rgba(4, 11, 31, .55); border: 1px solid rgba(216, 192, 138, .25); }
+  .cm-card h2 { margin-bottom: 16px; font-weight: 400; color: var(--gold); }
+  .mini-pass { display: flex; gap: 14px; align-items: center; padding: 12px; margin-top: 10px; border-radius: 12px; background: var(--cream); color: var(--ink); transition: translate .6s var(--ease-out); }
+  .mini-pass:hover { translate: 0 -3px; }
+  .mini-date { flex: none; width: 52px; text-align: center; font-size: 11px; text-transform: uppercase; border-right: 2px dashed rgba(4, 11, 31, .2); padding-right: 10px; }
+  .mini-date b { display: block; font-family: var(--serif); font-size: 28px; line-height: 1; }
+  .mini-pass > span:last-child b { display: block; font-family: var(--serif); font-size: 19px; line-height: 1.1; }
+  .mini-pass .label { font-size: 9.5px; color: rgba(4, 11, 31, .6); }
+  .cm-rules { counter-reset: r; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: rgba(243, 238, 228, .78); }
+  .cm-rules li { counter-increment: r; display: flex; gap: 10px; }
+  .cm-rules li::before { content: "0" counter(r); font-family: var(--mono); font-size: 11px; color: var(--gold); padding-top: 3px; }
+
+  /* composer and lightbox */
+  dialog { margin: auto; border: 0; color: var(--cream); }
+  dialog::backdrop { background: rgba(4, 11, 31, .82); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .composer { width: min(560px, calc(100vw - 32px)); padding: 0; border-radius: 22px; background: var(--navy); border: 1px solid rgba(216, 192, 138, .35); }
+  .composer-form { display: flex; flex-direction: column; gap: 16px; padding: 26px; }
+  .composer-form header { display: flex; justify-content: space-between; align-items: center; }
+  .composer-form h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; }
+  .composer-x, .lightbox-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(243, 238, 228, .25); background: none; cursor: pointer; }
+  .drop { position: relative; display: grid; place-items: center; min-height: 160px; border-radius: 14px; border: 1px dashed rgba(216, 192, 138, .5); overflow: hidden; cursor: pointer; text-align: center; }
+  .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .drop-hint { padding: 0 20px; color: rgba(243, 238, 228, .7); font-size: 14px; }
+  .drop-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .field .label { color: var(--gold); }
+  .field textarea, .field input, .field select { padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(243, 238, 228, .2); background: rgba(4, 11, 31, .55); color: var(--cream); font-size: 15px; resize: vertical; }
+  .field option { color: var(--ink); }
+  .field-row { display: flex; gap: 12px; }
+  .composer-note { font-size: 12.5px; color: rgba(243, 238, 228, .6); }
+  .composer .btn { align-self: flex-start; }
+  .lightbox { max-width: 92vw; max-height: 92vh; padding: 0; background: none; overflow: visible; }
+  .lightbox img { max-width: 88vw; max-height: 80vh; border-radius: 16px; box-shadow: 0 40px 120px rgba(0, 0, 0, .6); }
+  .lightbox-cap { margin-top: 14px; text-align: center; color: var(--gold); }
+  .lightbox-x { position: absolute; top: -52px; right: 0; color: var(--cream); }
+
+  /* the pass that tears open on arrival */
+  .tear { display: none; }
+  .from-ticket .tear { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: var(--cream); pointer-events: none; }
+  .tear-pass { position: relative; display: grid; grid-template-columns: 1fr 130px; width: min(680px, 86vw); border-radius: 18px; background: #fff; color: var(--ink); box-shadow: 0 40px 100px rgba(4, 11, 31, .25); }
+  .tear-main { display: flex; flex-direction: column; gap: 10px; padding: 30px 34px; border-right: 2px dashed rgba(4, 11, 31, .25); }
+  .tear-main .label { color: var(--royal); }
+  .tear-main b { font-family: var(--serif); font-weight: 600; font-size: clamp(44px, 6vw, 72px); line-height: 1; }
+  .tear-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: rgba(4, 11, 31, .65); }
+  .tear-stub { display: grid; place-content: center; text-align: center; font-size: 20px; line-height: 1.3; }
+  .tear-stamp { position: absolute; right: 150px; top: 24px; padding: 6px 14px; border: 2px solid var(--royal); border-radius: 6px; color: var(--royal); font-family: var(--mono); font-size: 15px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: rotate(-12deg); }
+</style>
+
+<script>
+  import { $, $$, gsap, SplitText, ScrollTrigger, reducedMotion, lenis } from '../scripts/animations/motion';
+
+  const rm = reducedMotion();
+  const ease = 'expo.out';
+
+  /* ---------- arrival: the pass gets stamped, tears at the perforation, the page shows ---------- */
+  const intro = () => {
+    if (rm) return gsap.from('.cm-hero', { opacity: 0, duration: 0.8 });
+    const split = SplitText.create('.cm-line', { type: 'lines', mask: 'lines', linesClass: 'ln' });
+    return gsap.timeline()
+      .from(split.lines, { yPercent: 115, duration: 1.3, ease, stagger: 0.08 })
+      .from('.cm-in', { opacity: 0, y: 18, duration: 1.1, ease, stagger: 0.08 }, 0.25);
+  };
+  if (document.documentElement.classList.contains('from-ticket')) {
+    lenis?.stop();
+    const done = () => { lenis?.start(); $('.tear')!.remove(); };
+    if (rm) gsap.to('.tear', { autoAlpha: 0, duration: 0.6, delay: 0.3, onComplete: done });
+    else gsap.timeline({ onComplete: done })
+      .fromTo('.tear-pass', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease })
+      .fromTo('.tear-stamp', { opacity: 0, scale: 1.8 }, { opacity: 0.9, scale: 1, duration: 0.5, ease }, 0.45)
+      .to('.tear-main', { xPercent: -14, yPercent: -40, rotation: -7, opacity: 0, duration: 1, ease: 'power3.inOut' }, 1.1)
+      .to('.tear-stub', { xPercent: 40, yPercent: 30, rotation: 10, opacity: 0, duration: 1, ease: 'power3.inOut' }, 1.1)
+      .to('.tear-stamp', { opacity: 0, duration: 0.3 }, 1.1)
+      .to('.tear', { backgroundColor: 'rgba(243,238,228,0)', duration: 0.9, ease: 'power2.inOut' }, 1.3)
+      .add(intro(), 1.5);
+  } else intro();
+
+  /* ---------- posts open from a mask as they arrive ---------- */
+  const reveal = (els: Element[]) => els.forEach((el) => {
+    if (rm) return gsap.from(el, { opacity: 0, duration: 0.8, scrollTrigger: { trigger: el, start: 'top 92%', once: true } });
+    gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 92%', once: true } })
+      .fromTo(el, { clipPath: 'inset(10% 6% 10% 6% round 20px)', y: 40 }, { clipPath: 'inset(0% 0% 0% 0% round 20px)', y: 0, duration: 1.3, ease, clearProps: 'clipPath,transform,translate' })
+      .from($('img', el), { scale: 1.15, duration: 1.6, ease }, 0);
+  });
+  reveal($$('.post'));
+
+  /* ---------- filters: type tabs and destination ---------- */
+  const grid = $('.cm-grid')!, empty = $('.cm-empty')!;
+  const filter = () => {
+    const type = $<HTMLInputElement>('input[name="type"]:checked')!.value, place = $<HTMLSelectElement>('select[name="place"]')!.value;
+    let shown = 0;
+    $$('.post', grid).forEach((p) => {
+      const ok = (type === 'toate' || p.dataset.type === type) && (!place || p.dataset.place === place);
+      p.hidden = !ok;
+      if (ok) { shown++; gsap.fromTo(p, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', clearProps: 'transform,translate' }); }
+    });
+    empty.hidden = shown > 0;
+    ScrollTrigger.refresh();
+  };
+  $$('input[name="type"], select[name="place"]').forEach((el) => el.addEventListener('change', filter));
+
+  /* ---------- likes (local only for now) ---------- */
+  grid.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>('.like');
+    if (!b) return;
+    const on = b.getAttribute('aria-pressed') !== 'true', n = $('[data-n]', b)!;
+    b.setAttribute('aria-pressed', String(on));
+    n.textContent = String(+n.textContent! + (on ? 1 : -1));
+    if (!rm) gsap.fromTo(b, { scale: 0.88 }, { scale: 1, duration: 0.5, ease: 'expo.out' });
+  });
+
+  /* ---------- lightbox: the photo grows out of its thumbnail (FLIP) ---------- */
+  const box = $<HTMLDialogElement>('.lightbox')!, big = $<HTMLImageElement>('img', box)!, cap = $('.lightbox-cap', box)!;
+  grid.addEventListener('click', (e) => {
+    const m = (e.target as Element).closest('.post-media');
+    if (!m) return;
+    const img = $<HTMLImageElement>('img', m)!, from = img.getBoundingClientRect();
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt;
+    cap.textContent = img.alt;
+    box.showModal();
+    lenis?.stop();
+    if (rm) return;
+    const to = big.getBoundingClientRect();
+    gsap.from(big, { x: from.left - to.left, y: from.top - to.top, scaleX: from.width / to.width, scaleY: from.height / to.height, transformOrigin: '0 0', duration: 0.8, ease: 'power3.inOut' });
+  });
+  const closeBox = () => box.close();
+  $('.lightbox-x', box)!.addEventListener('click', closeBox);
+  box.addEventListener('click', (e) => e.target === box && closeBox());
+  box.addEventListener('close', () => lenis?.start());
+
+  /* ---------- composer (demo: the post stays on this device) ---------- */
+  const dlg = $<HTMLDialogElement>('.composer')!, form = $<HTMLFormElement>('.composer-form')!;
+  const file = $<HTMLInputElement>('input[type="file"]', form)!, preview = $<HTMLImageElement>('.drop-preview', form)!;
+  $$('[data-compose]').forEach((b) => b.addEventListener('click', () => { dlg.showModal(); lenis?.stop(); }));
+  $('.composer-x', form)!.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('close', () => lenis?.start());
+  file.addEventListener('change', () => {
+    const f = file.files?.[0];
+    preview.hidden = !f;
+    if (f) preview.src = URL.createObjectURL(f);
+  });
+  form.addEventListener('submit', () => {
+    const d = new FormData(form), text = String(d.get('text') || '').trim(), place = String(d.get('place') || '').trim();
+    if (!text || !place) return;
+    const type = String(d.get('type')), el = document.createElement('article');
+    el.className = 'post';
+    el.dataset.type = type;
+    el.dataset.place = place;
+    const media = preview.hidden ? '' : '<button class="post-media" type="button" aria-label="Mărește poza"><img /></button>';
+    el.innerHTML = `${media}<div class="post-body"><header class="post-head"><span class="avatar">TU</span><div><b>Tu</b><span class="label">Acum</span></div><span class="post-local label">Doar pe acest dispozitiv</span></header><p></p><footer class="post-foot"><button class="like" type="button" aria-pressed="false"><span aria-hidden="true">♥</span> <span class="num" data-n>0</span></button><span class="label"></span></footer></div>`;
+    // what the user typed goes in as text, never as HTML
+    const img = $<HTMLImageElement>('img', el);
+    if (img) { img.src = preview.src; img.alt = `Poza ta din ${place}`; }
+    $('.post-body > p', el)!.textContent = text;
+    $('.post-foot .label', el)!.textContent = `${type === 'vacanta' ? 'Vacanță' : 'Eveniment'} · ${place}`;
+    grid.prepend(el);
+    form.reset();
+    preview.hidden = true;
+    if (!rm) gsap.from(el, { opacity: 0, y: -30, scale: 0.96, duration: 1, ease, clearProps: 'transform,translate' });
+    el.scrollIntoView({ block: 'center' });
+  });
+
+  /* ---------- the polaroid wall drifts; drag it with the mouse ---------- */
+  const wall = $('.cm-wall')!, track = $('.cm-wall-track')!;
+  let x = 0, vel = 0, half = 1, dragging = false, hovering = false, lastX = 0;
+  const measure = () => (half = track.scrollWidth / 2 || 1);
+  measure();
+  addEventListener('load', measure);
+  addEventListener('resize', measure);
+  gsap.ticker.add((_, dt) => {
+    if (!dragging) { vel *= 0.94; x += vel - (hovering || rm ? 0 : 0.04 * dt); }
+    x %= half;
+    if (x > 0) x -= half;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  });
+  wall.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hovering = true; });
+  wall.addEventListener('pointerleave', () => (hovering = false));
+  wall.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; vel = 0; wall.setPointerCapture(e.pointerId); wall.classList.add('grabbing'); });
+  wall.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; x += dx; vel = dx; });
+  const letGo = () => { dragging = false; wall.classList.remove('grabbing'); };
+  wall.addEventListener('pointerup', letGo);
+  wall.addEventListener('pointercancel', letGo);
+  const develop = new IntersectionObserver((es) => es.forEach((en) => en.isIntersecting && en.target.classList.add('dev')), { threshold: 0.4 });
+  $$('.polaroid').forEach((p) => develop.observe(p));
+</script>

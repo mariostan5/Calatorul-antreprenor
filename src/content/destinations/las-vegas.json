@@ -1,0 +1,9 @@
+{
+  "name": "Las Vegas",
+  "country": "SUA",
+  "image": "./las-vegas.jpg",
+  "start": "2026-12-16",
+  "end": "2026-12-20",
+  "summary": "Spectacole, Strip-ul și o zi la Grand Canyon.",
+  "order": 4
+}

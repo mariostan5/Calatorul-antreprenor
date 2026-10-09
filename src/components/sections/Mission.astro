@@ -1,0 +1,119 @@
+---
+import { countries } from '../../data/countries';
+import { PLANE } from '../ui/icons';
+import { landDots } from '../../data/worldmap';
+
+const P = (lon: number, lat: number) => [(lon + 180) * 4, (82 - lat) * 4];
+
+// each land dot belongs to the nearest member country within ~4°, if any
+const dots = landDots().map(([col, r]) => {
+  const lon = -178.75 + col * 2.5, lat = 80.75 - r * 2.5;
+  let c = -1, best = 4;
+  countries.forEach((m, i) => { const d = Math.hypot((lon - m.lon) * Math.cos((lat * Math.PI) / 180), lat - m.lat); if (d < best) { best = d; c = i; } });
+  return { x: col * 10 + 5, y: r * 10 + 5, c };
+});
+const home = countries.findIndex((c) => c.home);
+const [hx, hy] = P(countries[home].lon, countries[home].lat);
+const routes = countries.map((m, i) => {
+  if (i === home) return null;
+  const [x, y] = P(m.lon, m.lat), d = Math.hypot(x - hx, y - hy);
+  return { i, d: `M${hx} ${hy}Q${(hx + x) / 2} ${(hy + y) / 2 - d * 0.32} ${x} ${y}` };
+}).filter((r) => r !== null);
+---
+<section class="mission" id="misiune">
+  <div class="mission-grid">
+    <div class="mission-copy">
+      <span class="label kicker">Misiunea</span>
+      <h2 class="h2 h2-md" data-split>Români din toată lumea, conectați prin călătorii.</h2>
+      <p data-reveal>Locuim în țări diferite, dar ne întâlnim în aceleași locuri: în vacanțe de grup, la workshop-uri și într-o comunitate care se ajută. Călătoriile sunt motivul pentru care ne-am adunat.</p>
+      <ul class="legend label" data-reveal><li><i class="dot home"></i>{countries[home].name}, acasă</li><li><i class="dot"></i>Țările membrilor</li></ul>
+    </div>
+    <div class="flightmap">
+      <div class="fm-bar label num" aria-hidden="true">
+        <span>Alt 11.000 m</span><span>Viteză 890 km/h</span><span>Timp rămas <b data-eta>02:14</b></span>
+      </div>
+      <div class="fm-view">
+        <svg class="world" viewBox="0 0 1440 550" role="img" aria-label={`Harta lumii: rute de zbor din ${countries[home].name} spre ${countries.length - 1} țări în care locuiesc membrii clubului`}>
+          <defs>
+            {routes.map((r) => <mask id={`rm-${r.i}`} maskUnits="userSpaceOnUse" x="0" y="0" width="1440" height="550"><path class="route-reveal" d={r.d} /></mask>)}
+          </defs>
+          <g class="land">{dots.map((d) => <circle cx={d.x} cy={d.y} r="2.6" data-c={d.c >= 0 ? d.c : undefined} class={d.c === home ? 'home' : undefined} />)}</g>
+          <g class="routes">{routes.map((r) => <path class="route" d={r.d} mask={`url(#rm-${r.i})`} data-route={r.i} />)}</g>
+          <g class="pins">{countries.map((m, i) => { const [x, y] = P(m.lon, m.lat); return <circle class:list={['pin', { home: i === home }]} cx={x} cy={y} r="5" data-pin={i} />; })}</g>
+          <g class="map-plane"><path d={PLANE} transform="translate(-12 -12)" /></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .mission { padding: 18vh var(--pad); }
+  .mission-grid { display: grid; grid-template-columns: minmax(300px, .72fr) 1.6fr; gap: clamp(64px, 7vw, 120px); align-items: center; max-width: 1500px; margin: 0 auto; }
+  .mission-copy p { margin-top: 24px; max-width: 44ch; color: rgba(243, 238, 228, .76); font-size: clamp(16px, 1.2vw, 19px); }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 30px; color: rgba(243, 238, 228, .7); }
+  .dot { display: inline-block; width: 8px; height: 8px; margin-right: 10px; border-radius: 50%; vertical-align: middle; background: var(--gold); }
+  .dot.home { box-shadow: 0 0 0 4px rgba(216, 192, 138, .3); }
+
+  /* the cabin's flight-map screen */
+  .flightmap { border-radius: 22px; overflow: hidden; background: var(--ink); border: 1px solid rgba(243, 238, 228, .12); box-shadow: 0 50px 110px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06); }
+  .fm-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; padding: 14px 20px; border-bottom: 1px solid rgba(243, 238, 228, .08); color: rgba(243, 238, 228, .6); }
+  .fm-bar b { font-weight: 400; color: var(--gold); }
+  .fm-view { padding: 3% 2% 2%; background: radial-gradient(70% 70% at 55% 40%, rgba(11, 30, 79, .6), transparent 75%); }
+  .world { display: block; width: 100%; height: auto; overflow: visible; }
+  .world .land circle { fill: rgba(243, 238, 228, .2); transition: fill .8s; }
+  .world .land circle.lit, .world .land circle.home { fill: var(--gold); }
+  .world .route { fill: none; stroke: var(--gold); stroke-width: 2; stroke-dasharray: 1 7; stroke-linecap: round; }
+  .world .route-reveal { fill: none; stroke: #fff; stroke-width: 8; }
+  .world .pin { fill: var(--gold); transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform .8s var(--ease-out); }
+  .world .pin.lit, .world .pin.home { transform: none; }
+  .world .pin.home { fill: var(--cream); }
+  .map-plane path { fill: var(--cream); filter: drop-shadow(0 0 6px rgba(216, 192, 138, .9)); }
+  .map-plane { opacity: 0; }
+  /* without JS (or reduced motion) the whole map is lit */
+  html:not(.js) .world .land circle[data-c], html:not(.js) .world .pin { fill: var(--gold); transform: none; }
+  @media (max-width: 767px) {
+    .mission-grid { grid-template-columns: 1fr; gap: 6vh; }
+    .flightmap { margin: 0 calc(var(--pad) * -.5); }
+    .fm-view { overflow: hidden; }
+    .world { width: 170%; margin-left: -62%; }
+  }
+</style>
+
+<script>
+  import { $, $$, gsap, reducedMotion } from '../../scripts/animations/motion';
+
+  const world = $<SVGSVGElement>('.world')!, eta = $('[data-eta]')!, plane = $<SVGGElement>('.map-plane', world)!;
+  const routes = $$<SVGPathElement>('.route', world), reveals = $$<SVGPathElement>('.route-reveal', world);
+  const light = (c: string, on: boolean) => {
+    $$(`.land circle[data-c="${c}"], .pin[data-pin="${c}"]`, world).forEach((el) => el.classList.toggle('lit', on));
+  };
+
+  if (reducedMotion()) {
+    routes.forEach((r) => light(r.dataset.route!, true));
+  } else {
+    reveals.forEach((p) => { const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); });
+    // one timeline over the section: each country lights up, then its route draws with the plane on it
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: '.mission', start: 'top 50%', end: 'bottom 30%', scrub: 1 },
+      onUpdate: () => {
+        // time left counts down from 02:14 as the routes are flown
+        const left = Math.round(134 * (1 - tl.progress()));
+        eta.textContent = `${String((left / 60) | 0).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}`;
+      },
+    });
+    reveals.forEach((p, k) => {
+      const c = routes[k].dataset.route!, L = p.getTotalLength();
+      tl.to(p, {
+        strokeDashoffset: 0, duration: 1, ease: 'power1.inOut',
+        onUpdate() {
+          const done = L - (gsap.getProperty(p, 'strokeDashoffset') as number);
+          const pt = p.getPointAtLength(Math.max(0, done)), ahead = p.getPointAtLength(Math.min(L, done + 1));
+          plane.setAttribute('transform', `translate(${pt.x} ${pt.y}) rotate(${(Math.atan2(ahead.y - pt.y, ahead.x - pt.x) * 180) / Math.PI + 90}) scale(.9)`);
+          plane.style.opacity = done > 0.5 && done < L - 0.5 ? '1' : '0';
+          light(c, done >= L - 1);
+        },
+      }, k);
+    });
+  }
+</script>

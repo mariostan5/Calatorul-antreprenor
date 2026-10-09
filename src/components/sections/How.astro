@@ -1,0 +1,164 @@
+---
+import { Picture } from 'astro:assets';
+import dubai from '../../content/destinations/dubai.jpg';
+import phuket from '../../content/destinations/phuket.jpg';
+import bali from '../../content/destinations/bali.jpg';
+import cancun from '../../content/destinations/cancun.jpg';
+import shanghai from '../../content/destinations/shanghai.jpg';
+import group from '../../content/community/grup.jpg';
+import { PLANE } from '../ui/icons';
+
+// the "hand" of holidays in step 2; the middle one gets picked
+const fan = [[dubai, 'Dubai'], [phuket, 'Phuket'], [bali, 'Bali'], [cancun, 'Cancun'], [shanghai, 'Shanghai']] as const;
+const steps = ['Te înscrii', 'Alegi vacanța', 'Te bucuri și repeți'];
+---
+<section class="how" id="cum">
+  <div class="how-stage">
+    <div class="how-copy">
+      <span class="label kicker">Cum funcționează</span>
+      <h2 class="h2">Trei pași până la prima vacanță.</h2>
+      <ol class="how-steps">
+        {steps.map((s, i) => <li><button type="button"><b>{String(i + 1).padStart(2, '0')}</b><span>{s}</span></button></li>)}
+      </ol>
+    </div>
+    <div class="how-visual" aria-hidden="true">
+      <div class="how-tilt">
+        <div class="scene s1">
+          <div class="member">
+            <div class="member-top"><img src="/logo-mark.png" alt="" width="345" height="280" /><span class="label">Membru</span></div>
+            <div class="member-chip"></div>
+            <div class="member-name">Călătorul Antreprenor</div>
+            <div class="member-foot"><span class="label">Club de călătorii</span><span class="label">Hoteluri 4–5★</span></div>
+          </div>
+          <div class="badge"><span>✓</span>Bun venit în club</div>
+        </div>
+        <div class="scene s2">
+          <div class="fan">
+            {fan.map(([img, name], i) => (
+              <figure class:list={['fcard', { pick: i === 2 }]} style={`z-index:${i === 2 ? 5 : 3 - Math.abs(i - 2)}`}>
+                <Picture src={img} formats={['avif', 'webp']} widths={[400]} sizes="18vw" alt="" loading="lazy" />
+                <figcaption>{name}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <div class="badge"><span>✓</span>Vacanța ta e aleasă</div>
+        </div>
+        <div class="scene s3">
+          <div class="loop">
+            <Picture class="loop-photo" src={group} formats={['avif', 'webp']} widths={[600]} sizes="30vw" alt="" loading="lazy" />
+            <svg class="loop-ring" viewBox="0 0 200 200"><defs><path id="loop-path" d="M100 100m-86 0a86 86 0 1 1 172 0a86 86 0 1 1-172 0" /></defs><text><textPath href="#loop-path">TE BUCURI · ȘI REPEȚI · TE BUCURI · ȘI REPEȚI · TE BUCURI · ȘI REPEȚI ·</textPath></text></svg>
+            <div class="loop-orbit"><svg viewBox="0 0 24 24"><path d={PLANE} /></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .how-stage { position: relative; isolation: isolate; height: 100vh; display: grid; grid-template-columns: 1fr 1.05fr; gap: 7vw; align-items: center; max-width: 1440px; margin: 0 auto; padding: 0 var(--pad); }
+  .how-copy .h2 { font-size: clamp(40px, 4.6vw, 84px); max-width: 12ch; }
+  .how-steps { margin-top: 5vh; }
+  .how-steps li { position: relative; border-top: 1px solid rgba(243, 238, 228, .16); }
+  .how-steps li::after { content: ""; position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: var(--gold); transform-origin: left; transform: scaleX(var(--p, 0)); }
+  .how-steps button { display: flex; align-items: baseline; gap: 22px; width: 100%; padding: 22px 0; border: 0; background: none; text-align: left; cursor: pointer; }
+  .how-steps b { font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: .14em; color: rgba(243, 238, 228, .6); transition: color .4s; }
+  .how-steps span { font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 2.6vw, 44px); line-height: 1.08; color: rgba(243, 238, 228, .4); transition: color .5s, transform .8s var(--ease-out); }
+  .how-steps li.on b { color: var(--gold); }
+  .how-steps li.on span { color: var(--cream); transform: translateX(10px); }
+  html:not(.js) .how-steps span { color: var(--cream); }
+  .how-visual { position: relative; height: min(76vh, 680px); perspective: 1400px; }
+  .how-tilt { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+  .scene { position: absolute; inset: 0; display: grid; place-items: center; transform-style: preserve-3d; }
+  .badge { position: absolute; left: 50%; bottom: 6%; z-index: 6; padding: 10px 20px; border-radius: 999px; background: var(--cream); color: var(--ink); font-weight: 600; font-size: 14px; white-space: nowrap; box-shadow: 0 16px 40px rgba(0, 0, 0, .4); }
+  .badge span { color: var(--royal); margin-right: 6px; }
+  .member {
+    position: relative; width: min(86%, 520px); aspect-ratio: 1.586; border-radius: 22px; padding: 5.5%; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+    background: radial-gradient(120% 90% at 0% 0%, var(--royal) 0%, var(--navy) 55%, var(--ink) 100%);
+    border: 1px solid rgba(216, 192, 138, .45); box-shadow: 0 60px 120px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .14);
+  }
+  .member::after { content: ""; position: absolute; inset: -40%; background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, .18) 50%, transparent 58%); animation: shine 3.6s ease-in-out infinite; pointer-events: none; }
+  @keyframes shine { from { transform: translateX(-60%); } to { transform: translateX(60%); } }
+  .member-top { display: flex; justify-content: space-between; align-items: center; }
+  .member-top img { width: auto; height: clamp(30px, 3.4vw, 50px); }
+  .member-top .label { color: var(--gold); }
+  .member-chip { width: 15%; aspect-ratio: 1.3; border-radius: 8px; background: linear-gradient(135deg, var(--cream), var(--gold) 60%, var(--cream)); }
+  .member-name { font-family: var(--serif); font-weight: 500; font-size: clamp(22px, 2.5vw, 40px); line-height: 1; }
+  .member-foot { display: flex; justify-content: space-between; gap: 10px; color: rgba(243, 238, 228, .65); }
+  .member-foot .label { font-size: clamp(8px, .75vw, 11px); }
+  .fan { position: relative; width: 100%; height: 100%; }
+  .fcard { position: absolute; left: 33%; top: 50%; width: 34%; margin-top: -22.7%; aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: var(--navy); border: 3px solid rgba(243, 238, 228, .9); box-shadow: 0 30px 60px rgba(0, 0, 0, .5); }
+  .fcard img { width: 100%; height: 100%; object-fit: cover; }
+  .fcard figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 10px 10px; background: linear-gradient(rgba(4, 11, 31, 0), rgba(4, 11, 31, .85)); font-family: var(--serif); font-weight: 500; font-size: clamp(18px, 1.6vw, 26px); text-align: center; }
+  .fcard.pick { border-color: var(--gold); }
+  .loop { position: relative; width: min(80%, 520px); aspect-ratio: 1; }
+  .loop::before { content: ""; position: absolute; inset: 9%; border-radius: 50%; border: 1px dashed rgba(216, 192, 138, .6); animation: spin 40s linear infinite; }
+  .loop-photo { position: absolute; inset: 15%; width: 70%; height: 70%; border-radius: 50%; object-fit: cover; box-shadow: 0 40px 90px rgba(0, 0, 0, .5); }
+  .loop-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .loop-ring text { font-family: var(--mono); font-size: 8.5px; letter-spacing: 3px; fill: var(--gold); }
+  .loop-orbit { position: absolute; inset: 3%; }
+  .loop-orbit svg { position: absolute; left: 50%; top: 0; width: 10%; margin: -5% 0 0 -5%; fill: var(--cream); filter: drop-shadow(0 0 10px rgba(216, 192, 138, .7)); transform: rotate(-90deg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  /* without JS: only the membership card */
+  html:not(.js) .s2, html:not(.js) .s3 { display: none; }
+  @media (max-width: 900px) {
+    .how-stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-content: start; gap: 2vh; padding: 10vh var(--pad) 40px; }
+    .how-visual { height: 40vh; }
+    .how-copy .h2 { font-size: 34px; }
+    .how-steps { margin-top: 14px; }
+    .how-steps button { padding: 12px 0; gap: 14px; }
+    .how-steps span { font-size: 22px; }
+    .badge { font-size: 12px; padding: 8px 14px; }
+  }
+</style>
+
+<script>
+  import { $, $$, gsap, finePointer, reducedMotion, scrollToEl, isMobile } from '../../scripts/animations/motion';
+
+  const steps = $$('.how-steps li'), STEP_AT = [0, 1.05, 2.05], STEP_SHOW = [0.75, 1.85, 3];
+  gsap.set('.badge', { xPercent: -50 });
+  const rm = reducedMotion();
+  // the step list follows the timeline itself, so it stays right while scrub catches up
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: '.how-stage', start: 'top top', end: isMobile() ? '+=160%' : '+=260%', scrub: 1, pin: true, refreshPriority: 1 },
+    onUpdate: () => {
+      const t = tl.time(), end = tl.duration();
+      steps.forEach((li, i) => {
+        const a = STEP_AT[i], b = STEP_AT[i + 1] ?? end;
+        li.classList.toggle('on', t >= a && (t < b || i === 2));
+        li.style.setProperty('--p', String(gsap.utils.clamp(0, 1, (t - a) / (b - a))));
+      });
+    },
+  });
+  if (rm) {
+    // reduced motion: the three scenes simply fade into each other (the fan is laid out still)
+    gsap.set('.fcard', { xPercent: (i) => (i - 2) * 52, yPercent: (i) => Math.abs(i - 2) * 7, rotation: (i) => (i - 2) * 9 });
+    tl.fromTo('.s1', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3 }, 1)
+      .fromTo('.s2', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 1)
+      .to('.s2', { autoAlpha: 0, duration: 0.3 }, 2)
+      .fromTo('.s3', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 2)
+      .to({}, { duration: 1 }, 2.3);
+  } else {
+    tl.fromTo('.member', { rotationY: -70, rotationX: 12, y: 90, autoAlpha: 0, scale: 0.85 }, { rotationY: 0, rotationX: 0, y: 0, autoAlpha: 1, scale: 1, duration: 0.5, ease: 'power3.out' }, 0)
+      .fromTo('.s1 .badge', { scale: 0.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.25, ease: 'expo.out' }, 0.45)
+      .to('.member', { y: -80, rotationY: 28, autoAlpha: 0, duration: 0.35, ease: 'power3.in' }, 1)
+      .to('.s1 .badge', { scale: 0.6, autoAlpha: 0, duration: 0.2 }, 1)
+      .fromTo('.fcard', { xPercent: 0, yPercent: 0, rotation: 0, y: 90, autoAlpha: 0 }, { xPercent: (i) => (i - 2) * 52, yPercent: (i) => Math.abs(i - 2) * 7, rotation: (i) => (i - 2) * 9, y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.04, ease: 'power3.out' }, 1.12)
+      .to('.fcard.pick', { y: -44, scale: 1.14, duration: 0.25, ease: 'power3.out' }, 1.7)
+      .fromTo('.s2 .badge', { scale: 0.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.25, ease: 'expo.out' }, 1.75)
+      .to('.fcard', { xPercent: 0, yPercent: 0, rotation: 0, y: -70, autoAlpha: 0, duration: 0.35, stagger: 0.02, ease: 'power3.in' }, 2)
+      .to('.s2 .badge', { autoAlpha: 0, duration: 0.2 }, 2)
+      .fromTo('.loop', { scale: 0.55, rotation: -40, autoAlpha: 0 }, { scale: 1, rotation: 0, autoAlpha: 1, duration: 0.5, ease: 'power3.out' }, 2.1)
+      .fromTo('.loop-ring', { rotation: 0 }, { rotation: 300, duration: 1.1, ease: 'none' }, 2.1)
+      .fromTo('.loop-orbit', { rotation: 0 }, { rotation: -360, duration: 1.1, ease: 'none' }, 2.1);
+  }
+  steps.forEach((li, i) => $('button', li)!.addEventListener('click', () => {
+    const st = tl.scrollTrigger!;
+    scrollToEl(st.start + ((st.end - st.start) * STEP_SHOW[i]) / tl.duration());
+  }));
+  if (finePointer() && !rm) {
+    const hv = $('.how-visual')!, rx = gsap.quickTo('.how-tilt', 'rotationX', { duration: 0.6, ease: 'power3' }), ry = gsap.quickTo('.how-tilt', 'rotationY', { duration: 0.6, ease: 'power3' });
+    hv.addEventListener('pointermove', (e) => { const r = hv.getBoundingClientRect(); ry(((e.clientX - r.left) / r.width - 0.5) * 12); rx(-((e.clientY - r.top) / r.height - 0.5) * 12); });
+    hv.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  }
+</script>

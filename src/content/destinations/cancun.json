@@ -1,0 +1,9 @@
+{
+  "name": "Cancun",
+  "country": "Mexic",
+  "image": "./cancun.jpg",
+  "start": "2027-04-21",
+  "end": "2027-04-25",
+  "summary": "Caraibe, cenote și ruinele mayașe de la Tulum.",
+  "order": 7
+}

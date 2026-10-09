@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/sections/Nav.astro';
+import Footer from '../components/sections/Footer.astro';
+import PageHead from '../components/ui/PageHead.astro';
+import Inside from '../components/sections/Inside.astro';
+import Stats from '../components/sections/Stats.astro';
+import Mission from '../components/sections/Mission.astro';
+import How from '../components/sections/How.astro';
+import Faq from '../components/sections/Faq.astro';
+---
+<Base title="Clubul · Călătorul Antreprenor" description="Clubul de călătorii: hoteluri de 4–5★ la prețuri de membru, peste 2.000 de destinații și excursii de grup.">
+  <Nav />
+  <main class="page-body">
+    <PageHead num="II" name="Clubul" l1="Clubul" l2="la bord." sub="Hoteluri de 4–5★ la prețuri de membru, peste 2.000 de destinații și excursii de grup aproape în fiecare lună." />
+    <Inside />
+    <Stats />
+    <Mission />
+    <How />
+    <Faq />
+  </main>
+  <Footer />
+</Base>

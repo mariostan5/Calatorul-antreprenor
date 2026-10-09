@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Călătorul Antreprenor · Călătorește ca un antreprenor</title>
+<meta name="description" content="Clubul românilor care călătoresc mai mult și își construiesc, în paralel, o sursă de venit. Vacanțe de grup, puncte de călătorie, workshop-uri și o comunitate de peste 700 de români.">
+<link rel="icon" href="assets/logo-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Caveat:wght@500&family=DM+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/hublou.jpg">
+<link rel="preload" as="image" href="assets/nori.jpg">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true"></div>
+<div class="flight idle" aria-hidden="true"><div class="flight-ico"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div></div>
+
+<header class="nav">
+  <a class="nav-brand" href="#top"><img src="assets/logo-mark.png" alt=""><span>Călătorul Antreprenor</span></a>
+  <nav class="nav-links" aria-label="Principal">
+    <a href="#interior">Club</a><a href="#destinatii">Destinații</a><a href="#business">Business Class</a><a href="#academie">Academie</a><a href="#comunitate">Comunitate</a>
+  </nav>
+  <a class="nav-cta" href="#academie">Webinar gratuit</a>
+  <button class="nav-burger" type="button" aria-expanded="false" aria-controls="menu"><span>Meniu</span><i></i></button>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <button class="menu-close label" type="button">Închide ✕</button>
+  <a href="#interior">Club</a><a href="#destinatii">Destinații</a><a href="#business">Business Class</a><a href="#academie">Academie</a><a href="#comunitate">Comunitate</a><a href="#intrebari">Întrebări</a>
+  <a class="btn btn-light" href="#academie">Webinar gratuit</a>
+</div>
+
+<a class="wa is-hidden" href="#" aria-label="Scrie-ne pe WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 1.9 2.9 4.6 4.1 1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
+
+<div class="sky" aria-hidden="true"><img src="assets/nori.jpg" alt=""><div class="sky-tint"></div></div>
+
+<main>
+  <!-- 1. Hero: boarding, through the window -->
+  <section class="hero" id="top">
+    <div class="hero-stage">
+      <div class="cabin"><img src="assets/hublou.jpg" alt=""></div>
+      <div class="hero-shade"></div>
+      <svg class="leg" aria-hidden="true"></svg>
+      <div class="hero-copy">
+        <p class="label hero-kicker">Clubul Călătorul Antreprenor</p>
+        <h1 class="hero-title"><span class="line"><span>Călătorește</span></span><span class="line"><span>ca un antreprenor.</span></span></h1>
+        <p class="hero-sub">Vacanțe de grup, puncte de călătorie și o comunitate de peste 700 de români care învață să-și construiască un venit din ceea ce iubesc.</p>
+        <div class="flight-anchor"></div>
+        <div class="hero-actions">
+          <a class="btn btn-light" href="#academie">Webinar gratuit</a>
+          <a class="btn btn-ghost" href="#drumuri">Descoperă clubul</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Through the clouds -->
+  <section class="transit" aria-hidden="true"><svg class="leg"></svg></section>
+
+  <!-- 3. Two paths -->
+  <section class="paths" id="drumuri" data-lane="center" data-lane-m="edge">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="paths-head">
+      <span class="label kicker" data-gap>Două drumuri, același club</span>
+      <h2 class="h2" data-split data-gap>Vrei să călătorești? Sau vrei să construiești?</h2>
+    </div>
+    <div class="paths-grid">
+      <a class="path-card club" href="#interior">
+        <div class="path-media"><img src="assets/comunitate/algarve.jpg" alt="Membrii clubului pe stâncile din Algarve, Portugalia"></div>
+        <div class="path-body">
+          <span class="label">Pentru vacanțe</span>
+          <h3>Clubul</h3>
+          <p>Vacanțe de grup aproape în fiecare lună, puncte de călătorie strânse lunar și hoteluri de 4–5★ la prețuri de membru.</p>
+          <ul class="chips"><li>Puncte lunare</li><li>Voucher de bun venit</li><li>Cashback 3%</li><li>Excursii de grup</li></ul>
+          <span class="more">Descoperă clubul <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+      <a class="path-card pc-biz" href="#business">
+        <div class="path-media"><img src="assets/comunitate/londra.jpg" alt="Membrii clubului la evenimentul tematic din Londra"></div>
+        <div class="path-body">
+          <span class="label">Pentru venit</span>
+          <h3>Business Class</h3>
+          <p>Workshop-uri practice de marketing, vânzări și leadership, un plan personalizat și o comunitate care te ajută să construiești o sursă de venit.</p>
+          <ul class="chips"><li>Workshop-uri live</li><li>Mentorat</li><li>Plan personalizat</li><li>Evenimente</li></ul>
+          <span class="more">Intră în Business Class <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 4. Numbers -->
+  <section class="stats" data-lane="center">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="stats-grid">
+      <div class="stat"><b data-count="700" data-suffix="+">0</b><span>români în comunitate, din toată lumea</span></div>
+      <div class="stat"><b data-count="2000" data-suffix="+">0</b><span>destinații disponibile membrilor</span></div>
+      <div class="stat"><b data-count="270">0</b><span>puncte de călătorie strânse în fiecare lună</span></div>
+      <div class="stat"><b data-count="3" data-suffix="%">0</b><span>cashback la hoteluri și croaziere</span></div>
+    </div>
+  </section>
+
+  <!-- 5. Mission: dotted world -->
+  <section class="mission" id="misiune" data-lane="gap">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="mission-grid">
+      <div class="mission-copy" data-col="a">
+        <span class="label kicker">Misiunea noastră</span>
+        <h2 class="h2 h2-md" data-split>Din România, spre toată lumea.</h2>
+        <p data-reveal>Suntem români din toată lumea care vor mai mult de la viață: să vadă locuri noi, să-și facă prieteni și să crească pe plan personal și profesional. Călătoriile sunt nucleul a tot ce facem.</p>
+        <ul class="legend" data-reveal><li><i class="dot home"></i>România, acasă</li><li><i class="dot dest"></i>Tururi mondiale 2026–2027</li></ul>
+      </div>
+      <div class="mission-map" data-col="b"><svg class="world" viewBox="0 0 1440 550" role="img" aria-label="Harta lumii cu rutele tururilor mondiale care pleacă din România"></svg></div>
+    </div>
+  </section>
+
+  <!-- 6. The club, seen from inside -->
+  <section class="inside" id="interior">
+    <div class="inside-stage" data-lane="edge">
+      <svg class="leg" aria-hidden="true"></svg>
+      <div class="inside-head">
+        <div>
+          <span class="label kicker" data-gap>Clubul, văzut din interior</span>
+          <h2 class="h2 h2-md" data-gap>Tot ce primești ca membru, în mișcare.</h2>
+        </div>
+        <p class="label inside-note">Exemple ilustrative<span> · dă scroll</span></p>
+      </div>
+      <div class="inside-track">
+        <article class="ui-card" data-ui="points">
+          <div class="ui-screen">
+            <div class="ui-panel ui-hotel"><img src="assets/destinatii/las-vegas.jpg" alt=""><div><b>Conrad Las Vegas</b><span>24 – 28 Martie · 2 adulți</span></div><em>4★</em></div>
+            <div class="ui-balance"><span class="label">Soldul tău de puncte</span><b data-n>5.152</b></div>
+            <div class="ui-bar"><i></i></div>
+            <div class="ui-split"><span>Rezervarea: 1.800 puncte</span><span>+ 79 $</span></div>
+            <div class="ui-btn"><span>Rezervă cu puncte</span><span>Rezervare confirmată ✓</span></div>
+          </div>
+          <div class="ui-cap"><h3>Rezervi cu puncte</h3><p>Strângi 270 de puncte în fiecare lună și le folosești în hoteluri de 4–5★.</p></div>
+        </article>
+        <article class="ui-card" data-ui="voucher">
+          <div class="ui-screen ui-center">
+            <div class="voucher">
+              <div class="v-top"><span class="label">Voucher de bun venit</span><img src="assets/logo-mark.png" alt=""></div>
+              <b class="v-city">Dubai</b>
+              <div class="v-meta"><div><span class="label">Durată</span><b>6 zile</b></div><div><span class="label">Taxe</span><b>$248</b></div><div><span class="label">Valabil</span><b>18 luni</b></div></div>
+              <div class="v-stamp">Activat</div>
+            </div>
+            <p class="ui-hint">Acoperă 70–80% din costul primei vacanțe</p>
+          </div>
+          <div class="ui-cap"><h3>Voucher de bun venit</h3><p>Alegi destinația primei vacanțe. Plătești doar taxele.</p></div>
+        </article>
+        <article class="ui-card" data-ui="cashback">
+          <div class="ui-screen">
+            <span class="label ui-title">Cashback · luna aceasta</span>
+            <div class="ui-panel cb-row"><div><b>Hotel · Lisabona</b><span>3 nopți</span></div><em>1.240 €</em><strong data-cb="37.2">+0,00 €</strong></div>
+            <div class="ui-panel cb-row"><div><b>Croazieră · Mediterana</b><span>7 nopți</span></div><em>2.180 €</em><strong data-cb="65.4">+0,00 €</strong></div>
+            <div class="cb-total"><span class="label">Total cashback</span><b data-cb="102.6">0,00 €</b></div>
+          </div>
+          <div class="ui-cap"><h3>Cashback la fiecare rezervare</h3><p>Primești înapoi 3% la hoteluri și croaziere.</p></div>
+        </article>
+        <article class="ui-card" data-ui="group">
+          <div class="ui-screen">
+            <div class="ui-panel g-trip"><img src="assets/destinatii/bali.jpg" alt=""><div><span class="label">Excursie de grup</span><b>Bali · Indonezia</b><span>12 – 17 Ianuarie 2027</span></div></div>
+            <div class="g-avatars"><i>A</i><i>C</i><i>M</i><i>D</i><i>F</i><i>V</i><i>+</i></div>
+            <div class="g-count"><b data-g="26">0</b><span>membri merg împreună</span></div>
+          </div>
+          <div class="ui-cap"><h3>Excursii de grup</h3><p>Pleci alături de comunitate, aproape în fiecare lună.</p></div>
+        </article>
+        <article class="ui-card" data-ui="chat">
+          <div class="ui-screen chat">
+            <div class="chat-head"><span class="chat-av"><img src="assets/logo-mark.png" alt=""></span><div><b>Comunitatea Călătorul Antreprenor</b><span>peste 700 de membri</span></div></div>
+            <div class="msg">Cine mai vine la Dubai în decembrie?</div>
+            <div class="msg me">Noi doi! Am rezervat aseară, cu punctele.</div>
+            <div class="msg">Și eu. Ne vedem la cina de grup din Marina.</div>
+            <div class="typing"><i></i><i></i><i></i></div>
+          </div>
+          <div class="ui-cap"><h3>Comunitatea</h3><p>Români din toată lumea, într-un singur grup. Pleci singur, te întorci cu prieteni.</p></div>
+        </article>
+        <article class="ui-card" data-ui="workshops">
+          <div class="ui-screen">
+            <span class="label ui-title">Workshop-uri live · săptămâna aceasta</span>
+            <ul class="ws">
+              <li><span>LUN</span><b>Marketing pe social media</b><i></i></li>
+              <li><span>MIE</span><b>Vânzări și comunicare</b><i></i></li>
+              <li><span>JOI</span><b>Întrebări cu experți</b><i></i></li>
+              <li><span>SÂM</span><b>AI pentru antreprenori</b><i></i></li>
+            </ul>
+          </div>
+          <div class="ui-cap"><h3>Înveți în fiecare săptămână</h3><p>Sesiuni live de marketing, vânzări, comunicare și AI.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. World tours route -->
+  <section class="tours" id="destinatii">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="tours-intro">
+      <span class="label kicker" data-gap>Tururi mondiale · 2026 – 2027</span>
+      <h2 class="h2" data-split data-gap>Unde ai putea să vii cu noi</h2>
+      <p data-reveal data-gap>Plecări în grup, alături de comunitate. Dă scroll și urmărește avionul.</p>
+    </div>
+    <div class="tours-body"><div class="stops"></div></div>
+  </section>
+
+  <!-- 8. How it works -->
+  <section class="how" id="cum">
+    <div class="how-stage">
+      <svg class="leg" aria-hidden="true"></svg>
+      <div class="how-copy">
+        <span class="label kicker">Cum funcționează</span>
+        <h2 class="h2">Cum poți veni în vacanțe cu noi?</h2>
+        <ol class="how-steps">
+          <li><button type="button"><b>01</b><span>Te înscrii în club</span></button></li>
+          <li><button type="button"><b>02</b><span>Alegi din sute de vacanțe deja programate</span></button></li>
+          <li><button type="button"><b>03</b><span>Te bucuri și repeți</span></button></li>
+        </ol>
+      </div>
+      <div class="how-visual" aria-hidden="true">
+        <div class="how-tilt">
+          <div class="scene s1">
+            <div class="member">
+              <div class="member-top"><img src="assets/logo-mark.png" alt=""><span class="label">Membru</span></div>
+              <div class="member-chip"></div>
+              <div class="member-name">Călătorul Antreprenor</div>
+              <div class="member-foot"><span class="label">Club de călătorii</span><span class="label">Resorturi 4–5★</span></div>
+            </div>
+            <div class="badge"><span>✓</span>Bun venit în club</div>
+          </div>
+          <div class="scene s2">
+            <div class="fan"></div>
+            <div class="badge"><span>✓</span>Vacanța ta e aleasă</div>
+          </div>
+          <div class="scene s3">
+            <div class="loop">
+              <img class="loop-photo" src="assets/comunitate/grup.jpg" alt="">
+              <svg class="loop-ring" viewBox="0 0 200 200"><defs><path id="loop-path" d="M100 100m-86 0a86 86 0 1 1 172 0a86 86 0 1 1-172 0"/></defs><text><textPath href="#loop-path">TE BUCURI · ȘI REPEȚI · TE BUCURI · ȘI REPEȚI · TE BUCURI · ȘI REPEȚI ·</textPath></text></svg>
+              <div class="loop-orbit"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Business Class -->
+  <section class="biz" id="business">
+    <div class="curtain" aria-hidden="true"><div class="curtain-l"></div><div class="curtain-r"></div><span class="curtain-label">Business Class</span></div>
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="biz-grid">
+      <div class="biz-copy" data-col="a">
+        <span class="label kicker">Business Class</span>
+        <h2 class="h2 h2-md" data-split>Pentru cei care vor mai mult decât vacanțe.</h2>
+        <p data-reveal>Călătorul Antreprenor are două direcții: călătorul și antreprenorul. În Business Class înveți marketing, vânzări și leadership pe un business real din industria călătoriilor, alături de oameni care au făcut deja drumul.</p>
+        <div class="biz-actions" data-reveal><a class="btn btn-gold" href="#academie">Rezervă un workshop gratuit</a></div>
+        <p class="biz-note" data-reveal>Câștigurile depind de timpul, efortul și rezultatele fiecăruia. Nu promitem venituri garantate.</p>
+      </div>
+      <ol class="biz-pillars" data-col="b">
+        <li><b>01</b><h3>Înveți</h3><p>Workshop-uri practice, live în fiecare săptămână: marketing, vânzări, comunicare, social media, AI și leadership. Plus sesiuni de întrebări cu experți.</p></li>
+        <li><b>02</b><h3>Construiești</h3><p>Promovezi abonamentul de călătorii cu uneltele din platformă și ești remunerat pentru rezultate reale. Când trei persoane recomandate de tine devin membri, abonamentul tău lunar este acoperit.</p></li>
+        <li><b>03</b><h3>Crești</h3><p>Primești un plan personalizat după obiectivul tău, un mentor și un asistent inteligent care îți arată pașii. Totul într-o comunitate care crește împreună.</p></li>
+      </ol>
+    </div>
+    <div class="journey">
+      <div class="journey-head"><span class="label kicker" data-gap>Parcursul tău</span><h3 data-gap>Primele 30 de zile</h3></div>
+      <ol class="journey-steps">
+        <li><b>01</b><h4>Obiectivul tău</h4><p>Ne spui ce vrei: doar călătorii, vacanțe plătite sau o nouă sursă de venit. Construim traseul după el.</p></li>
+        <li><b>02</b><h4>Antrenamentele de bază</h4><p>Două antrenamente de câte o oră și jumătate: mentalitate, marketing, vânzări și cum găsești oameni interesați.</p></li>
+        <li><b>03</b><h4>Leadership</h4><p>Formarea care te ajută să-ți asumi rezultatele și să-i inspiri și pe alții.</p></li>
+        <li><b>04</b><h4>Practică, live</h4><p>Workshop-uri săptămânale și sesiuni de întrebări cu experți. Aplici imediat ce înveți.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 10. Academy & events -->
+  <section class="events" id="academie" data-lane="gap">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="events-head">
+      <span class="label kicker" data-gap>Academie & evenimente</span>
+      <h2 class="h2" data-split data-gap>Următoarele zboruri</h2>
+    </div>
+    <div class="events-grid">
+      <div class="webinar-card" data-col="a" data-reveal>
+        <span class="live-chip"><i></i>Live în fiecare joi</span>
+        <h3>Webinar de prezentare</h3>
+        <p>Afli cum funcționează clubul, cum strângi puncte de călătorie și cum poți construi un venit alături de noi. Durează aproximativ 40 de minute.</p>
+        <div class="cd" aria-label="Timp rămas până la următorul webinar live">
+          <div><b data-cd="d">0</b><span>zile</span></div><div><b data-cd="h">00</b><span>ore</span></div><div><b data-cd="m">00</b><span>min</span></div><div><b data-cd="s">00</b><span>sec</span></div>
+        </div>
+        <p class="label cd-when">Joi, 21:00 ora României<span data-local></span></p>
+        <a class="btn btn-light" href="https://mariostan5.github.io/landing-page/#inscriere">Rezervă-ți locul</a>
+        <small>Rulează zilnic înregistrat. Joia e live.</small>
+      </div>
+      <div class="tickets" data-col="b">
+        <article class="ticket"><div class="t-date"><b>13</b><span>Oct</span><small>Marți</small></div><div class="t-main"><span class="label">Workshop gratuit · Online</span><h4>Cum strângi puncte de călătorie</h4><p>19:00 ora României · 60 min · Zoom</p></div><a class="t-go" href="#final">Rezervă</a></article>
+        <article class="ticket"><div class="t-date"><b>20</b><span>Oct</span><small>Marți</small></div><div class="t-main"><span class="label">Workshop gratuit · Online</span><h4>Social media pentru începători</h4><p>19:00 ora României · 60 min · Zoom</p></div><a class="t-go" href="#final">Rezervă</a></article>
+        <article class="ticket"><div class="t-date"><b>27</b><span>Oct</span><small>Marți</small></div><div class="t-main"><span class="label">Workshop gratuit · Online</span><h4>Vânzări fără presiune</h4><p>19:00 ora României · 60 min · Zoom</p></div><a class="t-go" href="#final">Rezervă</a></article>
+        <p class="label tickets-note">Titluri și date de exemplu · se înlocuiesc cu calendarul real</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Community wall -->
+  <section class="gallery" id="comunitate" data-lane="edge">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="gallery-intro">
+      <span class="label kicker" data-gap>Comunitatea</span>
+      <h2 class="h2" data-split data-gap>O comunitate cum nu ai mai văzut…</h2>
+      <p data-reveal>Un club creat pentru românii care vor să călătorească mai mult, să-și facă prieteni noi, dezvoltare personală și profesională și posibilitatea de a construi o nouă sursă de venit.</p>
+      <p class="gallery-call" data-reveal>Hai cu noi și ai parte de o comunitate cu peste 700 de români din întreaga lume!</p>
+    </div>
+    <div class="gallery-stage"><div class="track"></div></div>
+    <p class="gallery-hint label">← Trage sau glisează pozele →</p>
+  </section>
+
+  <!-- 12. FAQ -->
+  <section class="faq" id="intrebari" data-lane="gap">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="faq-grid">
+      <div class="faq-head" data-col="a">
+        <span class="label kicker" data-gap>Întrebări frecvente</span>
+        <h2 class="h2 h2-md" data-split data-gap>Tot ce trebuie să știi.</h2>
+        <p data-reveal>Nu găsești răspunsul? Scrie-ne pe WhatsApp și îți răspundem noi.</p>
+      </div>
+      <div class="faq-list" data-col="b">
+        <details><summary>Ce este Clubul Călătorul Antreprenor?<i></i></summary><p>Este un club de călătorii pentru români care vor să călătorească inteligent, cu acces la vacanțe de grup, reduceri la hoteluri de lux și o comunitate de peste 700 de membri din toată lumea.</p></details>
+        <details><summary>Ce este un abonament la vacanțe?<i></i></summary><p>Este un abonament lunar care îți oferă puncte de călătorie în fiecare lună, voucher de vacanță de bun venit, cashback la hoteluri și croaziere, plus acces la excursii de grup și resorturi exclusiviste.</p></details>
+        <details><summary>Cum funcționează webinarul de prezentare?<i></i></summary><p>Webinarul are loc în fiecare joi la ora 21:00 (ora României). Acolo îți prezentăm clubul, beneficiile, excursiile de grup programate și modul de înscriere. Durează aproximativ 45 de minute și este gratuit.</p></details>
+        <details><summary>Ce include abonamentul de membru?<i></i></summary><p>Puncte de călătorie lunare, voucher de vacanță de bun venit, 3% cashback la hoteluri și croaziere, acces la peste 2000 de destinații și excursii de grup în toată lumea.</p></details>
+        <details><summary>Pot folosi punctele pentru alte persoane?<i></i></summary><p>Da, poți folosi punctele pentru a rezerva vacanțe pentru tine și familia ta (până la 6 persoane), în oricare din cele 2000+ destinații disponibile.</p></details>
+        <details><summary>Pot anula abonamentul?<i></i></summary><p>Da, poți renunța la abonament în orice moment. Punctele acumulate pot fi folosite timp de 2 ani de la ultima plată.</p></details>
+        <details><summary>Trebuie să construiesc o afacere ca să fiu membru?<i></i></summary><p>Nu. Mulți membri vin doar pentru călătorii. Dacă vrei și partea de business, îți facem un plan după obiectivul tău.</p></details>
+        <details><summary>Care este costul pentru a deveni membru?<i></i></summary><p>Avem două abonamente: Titanium și Platinum. Detaliile complete de preț și beneficii sunt prezentate în webinarul gratuit.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. Final: two tickets, one plane -->
+  <section class="final" id="final">
+    <svg class="leg" aria-hidden="true"></svg>
+    <div class="final-head">
+      <span class="label kicker" data-gap>Pasul următor</span>
+      <h2 class="h2" data-split data-gap>Alege-ți zborul.</h2>
+    </div>
+    <div class="final-grid">
+      <a class="fpass" href="https://mariostan5.github.io/landing-page/#inscriere">
+        <div class="fp-top"><span class="label">Boarding pass · Pentru vacanțe</span><img src="assets/logo-mark.png" alt=""></div>
+        <div class="fp-route"><div><span class="label">De la</span><b>Acasă</b></div><i></i><div><span class="label">Spre</span><b>Club</b></div></div>
+        <h3>Webinar de prezentare</h3>
+        <div class="fp-meta"><div><span class="label">Când</span><b>Joi · 21:00</b></div><div><span class="label">Poarta</span><b>Online</b></div><div><span class="label">Loc</span><b>Gratuit</b></div></div>
+        <span class="fp-go">Rezervă locul <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <div class="final-hub" aria-hidden="true">
+        <span class="hub-ring"><svg class="hub-plane" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></span>
+        <span class="label">sau</span>
+      </div>
+      <a class="fpass fpass-biz" href="#academie">
+        <div class="fp-top"><span class="label">Boarding pass · Pentru venit</span><img src="assets/logo-mark.png" alt=""></div>
+        <div class="fp-route"><div><span class="label">De la</span><b>Azi</b></div><i></i><div><span class="label">Spre</span><b>Business</b></div></div>
+        <h3>Workshop gratuit</h3>
+        <div class="fp-meta"><div><span class="label">Când</span><b>Marți · 19:00</b></div><div><span class="label">Poarta</span><b>Online</b></div><div><span class="label">Loc</span><b>Gratuit</b></div></div>
+        <span class="fp-go">Vezi workshop-urile <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="assets/logo-mark.png" alt="Călătorul Antreprenor">
+        <p>Clubul românilor care călătoresc mai mult și construiesc, în paralel, ceva al lor.</p>
+        <a class="btn btn-light" href="#academie">Webinar gratuit</a>
+      </div>
+      <nav class="foot-cols" aria-label="Footer">
+        <div><h4>Club</h4><a href="#interior">Beneficii</a><a href="#destinatii">Destinații</a><a href="#cum">Cum funcționează</a></div>
+        <div><h4>Business Class</h4><a href="#business">Programul</a><a href="#academie">Workshop-uri</a><a href="#academie">Academie</a></div>
+        <div><h4>Comunitate</h4><a href="#comunitate">Galerie</a><a href="#academie">Evenimente</a><a href="#intrebari">Întrebări</a></div>
+        <div><h4>Legal</h4><a href="#">Termeni</a><a href="#">Confidențialitate</a><a href="#">Cookies</a><a href="#">Nota despre venituri</a><a href="https://anpc.ro/" rel="noopener">ANPC</a></div>
+      </nav>
+    </div>
+    <div class="foot-word" aria-hidden="true">Călătorul Antreprenor</div>
+    <div class="foot-bottom"><span>© 2026 Călătorul Antreprenor</span><span>Instagram · Facebook · TikTok · YouTube</span><span>Făcut cu drag pentru românii din toată lumea</span></div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="site.js"></script>
+</body>
+</html>

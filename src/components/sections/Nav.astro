@@ -1,0 +1,106 @@
+---
+
+const links = [
+  ['Club', '/club'],
+  ['Destinații', '/destinatii'],
+  ['Business Class', '/business-class'],
+  ['Academie', '/business-class#academie'],
+  ['Comunitate', '/comunitate'],
+];
+const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<header class="nav">
+  <a class="nav-brand" href="/#top" aria-label="Călătorul Antreprenor, acasă">
+    <img src="/logo-mark.png" alt="" width="345" height="280" />
+    <span>Călătorul Antreprenor</span>
+  </a>
+  <nav class="nav-links" aria-label="Principal">
+    {links.map(([t, h]) => <a href={h} aria-current={here === h ? 'page' : undefined}>{t}</a>)}
+  </nav>
+  <a class="btn btn-gold nav-cta" href="/login" data-magnetic>Login</a>
+  <button class="nav-burger label" type="button" aria-expanded="false" aria-controls="menu">Meniu<i></i></button>
+</header>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Meniu" hidden>
+  <button class="menu-close label" type="button">Închide ✕</button>
+  <nav aria-label="Meniu mobil">
+    {links.map(([t, h]) => <a href={h}><span>{t}</span></a>)}
+  </nav>
+  <a class="btn btn-gold" href="/login">Login</a>
+</div>
+
+<style is:global>
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; gap: 36px; padding: 16px var(--pad);
+    border-bottom: 1px solid transparent;
+    transition: transform .8s var(--ease-inout), background-color .5s, border-color .5s, backdrop-filter .5s;
+  }
+  .nav.solid {
+    background: rgba(7, 20, 51, .6); border-color: rgba(243, 238, 228, .08);
+    -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+  }
+  .nav.away { transform: translateY(-102%); }
+  .nav-brand { display: flex; align-items: center; gap: 12px; }
+  .nav-brand img { width: auto; height: 28px; }
+  .nav-brand span { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 30px; margin-left: auto; }
+  .nav-links a { position: relative; font-size: 14px; font-weight: 500; color: rgba(243, 238, 228, .8); transition: color .3s; }
+  .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: var(--gold); transform: scaleX(0); transform-origin: right; transition: transform .6s var(--ease-out); }
+  .nav-links a:hover { color: var(--cream); }
+  .nav-links a:hover::after, .nav-links a[aria-current]::after { transform: scaleX(1); transform-origin: left; }
+  .nav-cta { padding: 10px 18px; font-size: 13.5px; }
+  .nav-burger { display: none; align-items: center; gap: 12px; margin-left: auto; padding: 12px 0; border: 0; background: none; cursor: pointer; }
+  .nav-burger i { position: relative; width: 22px; height: 1px; background: currentColor; }
+  .nav-burger i::after { content: ""; position: absolute; left: 0; top: 6px; width: 14px; height: 1px; background: currentColor; }
+  @media (max-width: 980px) { .nav-links, .nav-cta { display: none; } .nav-burger { display: flex; } }
+
+  .menu {
+    position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; justify-content: center; gap: 36px;
+    padding: 0 var(--pad); background: radial-gradient(80% 60% at 80% 10%, rgba(11, 30, 79, .9), transparent 70%), var(--ink);
+  }
+  .menu[hidden] { display: none; }
+  .menu nav { display: flex; flex-direction: column; }
+  .menu nav a { display: block; overflow: hidden; font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 10vw, 64px); line-height: 1.18; }
+  .menu nav a span { display: inline-block; }
+  .menu .btn { align-self: flex-start; }
+  .menu-close { position: absolute; top: 22px; right: var(--pad); padding: 8px 0; border: 0; background: none; cursor: pointer; }
+</style>
+
+<script>
+  import { $, $$, gsap, lenis, reducedMotion } from '../../scripts/animations/motion';
+
+  const nav = $('.nav')!, menu = $('#menu')!, burger = $('.nav-burger')!;
+
+  // glass once you scroll, hides going down and returns going up (on the 3D home it stays put)
+  const fixed = document.documentElement.classList.contains('xp-on');
+  let lastY = 0;
+  gsap.ticker.add(() => {
+    const y = scrollY;
+    nav.classList.toggle('solid', !fixed && y > 40);
+    if (!fixed && Math.abs(y - lastY) > 6) {
+      nav.classList.toggle('away', y > lastY && y > innerHeight && menu.hidden === true);
+      lastY = y;
+    }
+  });
+
+  const setMenu = (open: boolean) => {
+    menu.hidden = !open;
+    burger.setAttribute('aria-expanded', String(open));
+    if (open) {
+      lenis?.stop();
+      const words = $$('nav a span', menu);
+      reducedMotion()
+        ? gsap.from(menu, { opacity: 0, duration: 0.4 })
+        : gsap.from(words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.08 });
+      $('a', menu)!.focus();
+    } else {
+      lenis?.start();
+      burger.focus();
+    }
+  };
+  burger.addEventListener('click', () => setMenu(true));
+  $('.menu-close', menu)!.addEventListener('click', () => setMenu(false));
+  $$('a', menu).forEach((a) => a.addEventListener('click', () => { menu.hidden = true; burger.setAttribute('aria-expanded', 'false'); lenis?.start(); }));
+  addEventListener('keydown', (e) => e.key === 'Escape' && !menu.hidden && setMenu(false));
+</script>

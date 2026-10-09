@@ -1,0 +1,72 @@
+---
+import { config } from '../../config';
+
+const cols = [
+  ['Club', [['Beneficii', '/#club'], ['Destinații', '/#destinatii'], ['Cum funcționează', '/#cum']]],
+  ['Business Class', [['Programul', '/#business'], ['Workshop-uri', '/#academie'], ['Webinar gratuit', config.webinarUrl]]],
+  ['Comunitate', [['Galerie', '/comunitate'], ['Întrebări', '/#intrebari'], ['WhatsApp', config.whatsapp]]],
+  ['Legal', [['Termeni și condiții', '/termeni'], ['Confidențialitate', '/confidentialitate'], ['Cookies', '/cookies'], ['Nota despre venituri', '/nota-venituri']]],
+] as const;
+const social = Object.entries(config.social);
+const c = config.company;
+---
+<footer class="foot">
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="/logo-mark.png" alt="Călătorul Antreprenor" width="345" height="280" />
+        <p>Clubul românilor din toată lumea care călătoresc mai mult și construiesc, în paralel, ceva al lor.</p>
+        <a class="btn btn-gold" href={config.webinarUrl}>Webinar gratuit</a>
+      </div>
+      <nav class="foot-cols" aria-label="Subsol">
+        {cols.map(([h, links]) => (
+          <div><h4 class="label">{h}</h4>{links.map(([t, href]) => <a href={href}>{t}</a>)}</div>
+        ))}
+      </nav>
+    </div>
+    <div class="foot-word" aria-hidden="true">Călătorul Antreprenor</div>
+    <div class="foot-legal">
+      <p>{c.name} · CUI {c.cui} · {c.regCom} · {c.address} · {c.email}</p>
+      <p class="foot-anpc">
+        <a href="https://anpc.ro/" rel="noopener" target="_blank">ANPC</a>
+        <a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">Soluționarea alternativă a litigiilor (SAL)</a>
+        <a href="https://consumer-redress.ec.europa.eu/" rel="noopener" target="_blank">Soluționarea online a litigiilor (SOL)</a>
+      </p>
+    </div>
+    <div class="foot-bottom">
+      <span>© {new Date().getFullYear()} Călătorul Antreprenor</span>
+      <span class="foot-social">{social.map(([n, href]) => <a href={href} rel="noopener">{n[0].toUpperCase() + n.slice(1)}</a>)}</span>
+      <span>Făcut pentru românii din toată lumea</span>
+    </div>
+  </div>
+</footer>
+
+<style is:global>
+  .foot { position: relative; z-index: 2; overflow: hidden; background: var(--ink); border-top: 1px solid rgba(243, 238, 228, .08); }
+  .foot-inner { padding: 14vh var(--pad) 28px; }
+  .foot-top { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; }
+  .foot-brand img { width: auto; height: 64px; }
+  .foot-brand p { max-width: 34ch; margin: 22px 0 26px; color: rgba(243, 238, 228, .68); }
+  .foot-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+  .foot-cols h4 { margin-bottom: 16px; font-weight: 400; color: var(--gold); }
+  .foot-cols a { display: block; padding: 5px 0; color: rgba(243, 238, 228, .7); font-size: 15px; transition: color .3s; }
+  .foot-cols a:hover { color: var(--cream); }
+  .foot-word { margin: 12vh 0 5vh; font-family: var(--serif); font-weight: 500; font-size: 8.6vw; line-height: .9; letter-spacing: -.03em; white-space: nowrap; color: var(--cream); }
+  .foot-legal { display: flex; flex-direction: column; gap: 10px; padding: 22px 0; border-top: 1px solid rgba(243, 238, 228, .08); font-size: 13px; color: rgba(243, 238, 228, .6); }
+  .foot-anpc { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .foot-anpc a, .foot-social a { text-decoration: underline; text-underline-offset: 3px; }
+  .foot-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding-top: 22px; border-top: 1px solid rgba(243, 238, 228, .08); font-size: 13px; color: rgba(243, 238, 228, .6); }
+  .foot-social { display: flex; gap: 16px; }
+  @media (max-width: 900px) {
+    .foot-top { grid-template-columns: 1fr; }
+    .foot-cols { grid-template-columns: 1fr 1fr; }
+    .foot-word { font-size: 12.5vw; white-space: normal; }
+  }
+</style>
+
+<script>
+  import { gsap, reducedMotion } from '../../scripts/animations/motion';
+  // the footer rises from underneath, like a curtain
+  if (!reducedMotion())
+    gsap.from('.foot-inner', { yPercent: -30, ease: 'none', scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom bottom', scrub: true } });
+</script>
