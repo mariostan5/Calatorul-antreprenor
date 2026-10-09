@@ -2,10 +2,11 @@
    footage towards the next stop and it runs on its own, forward, at film speed (a GSAP tween of the
    footage clock); going back cuts through a short fade. The frames play on a screen-filling plane mixed by
    a shader (frame blending, a door whose leaves slide open onto the next room, grain, vignette). In front:
-   dust, the community photos on a reel, one clickable marker per page. */
+   dust and one clickable marker per page; the community photos are a DepthCarousel (React Bits) on top. */
 import * as THREE from 'three';
 import { Observer } from 'gsap/Observer';
 import { $, $$, gsap, SplitText, lenis, reducedMotion, finePointer } from './animations/motion';
+import { createDepthCarousel } from './depth-carousel';
 
 gsap.registerPlugin(Observer);
 
@@ -68,7 +69,7 @@ const GALLERY = 1;
 // how long each hop between chapters plays on screen (seconds): the footage runs a little faster than life
 const HOP = [6, 4, 2.2, 2.2];
 
-// one clickable marker per chapter (the community's are its photos); `at` is a point on the 16:9 frame
+// one clickable marker per chapter (the community has its photo carousel instead); `at` is a point on the 16:9 frame
 const HOTS = [
   { ch: 2, at: [0.585, 0.66], href: '/club', tip: 'Descoperă clubul' },
   { ch: 3, at: [0.62, 0.84], href: '/business-class#academie', tip: 'Intră în Academie' },
@@ -127,14 +128,6 @@ const glowTex = (inner: string, outer: string) => canvasTex(128, 128, (g) => {
   g.fillStyle = r; g.fillRect(0, 0, 128, 128);
 });
 type Photo = { src: string; destination: string; caption: string };
-/** A community photo as a print: cream border, the place underneath. */
-const printTex = (img: HTMLImageElement, p: Photo) => canvasTex(640, 800, (g) => {
-  g.fillStyle = '#F3EEE4'; g.fillRect(0, 0, 640, 800);
-  const bw = 584, bh = 620, r = Math.max(bw / img.width, bh / img.height), sw = bw / r, sh = bh / r;
-  g.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 28, 28, bw, bh);
-  g.fillStyle = '#040B1F'; g.font = '500 46px "Cormorant Garamond", Georgia, serif'; g.fillText(p.destination, 30, 712);
-  g.fillStyle = 'rgba(4,11,31,.55)'; g.font = '400 20px "DM Mono", monospace'; g.fillText(p.caption.toUpperCase(), 32, 756);
-});
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -189,21 +182,16 @@ export function startJourney(introDone: Promise<void>) {
   })();
   scene.add(dust);
 
-  /* ---------- the community photos, on a reel at the left of the cabin ---------- */
-  const reel = new THREE.Group();
-  scene.add(reel);
-  const R = 2.4, STEP = 0.5; // the reel's radius and the angle between prints
-  const cards = photos.map((p) => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.375), new THREE.MeshBasicMaterial({ color: '#F3EEE4', transparent: true, opacity: 0 }));
-    const img = new Image();
-    img.onload = () => document.fonts.ready.then(() => {
-      const mat = m.material as THREE.MeshBasicMaterial;
-      mat.map = printTex(img, p); mat.color.set('#ffffff'); mat.needsUpdate = true;
-    });
-    img.src = p.src;
-    reel.add(m);
-    return m;
+  /* ---------- the community photos: a depth carousel at the left of the cabin (the page owns the wheel:
+     one scroll, one photo; after the last one the film goes on through the door) ---------- */
+  const galleryBox = $('.xp-gallery')!;
+  const carousel = createDepthCarousel($('.xp-gallery-carousel')!, {
+    items: photos.map((p) => ({ image: p.src, alt: `${p.destination}: ${p.caption}` })),
+    depth: 220, spread: 90, tilt: 22, tiltDirection: 'right', perspective: 1400, visibleCards: 4,
+    falloff: 0.2, blur: 7, autoplay: true, loop: true, cardWidth: 270, wheel: false, label: 'Poze din comunitate',
   });
+  carousel.setPaused(true);
+  const lastPhoto = Math.max(0, carousel.count - 1);
 
   /* ---------- the markers ---------- */
   // a dark glass disc with a gold ring and a bright core: reads over any part of the picture
@@ -226,15 +214,11 @@ export function startJourney(introDone: Promise<void>) {
     scene.add(group);
     return { ...h, group, hit: [dot], fade: 0 };
   });
-  // the community's "marker" is its photos: click one to open the feed
-  const photoHot: Hot = { ch: GALLERY, href: '/comunitate', tip: 'Vezi în comunitate', group: reel, hit: cards, fade: 0 };
-  hots.push(photoHot);
   const place = () => {
     for (const h of hots) if (h.at) {
       h.group.position.copy(onFrame(h.at[0], h.at[1], D * 0.9));
       h.group.scale.setScalar(frame.w * 0.045 * 0.9);
     }
-    reel.position.copy(onFrame(0.21, 0.54, 4.6));
   };
 
   const resize = () => {
@@ -324,17 +308,12 @@ export function startJourney(introDone: Promise<void>) {
 
   /* ---------- the film: where we are, and moving on ---------- */
   const clock = { t: 0 }; //  the footage time on screen
-  const gal = { s: 0 }; //    the photo the reel shows
   let index = 0, busy = false, inFooter = false, hop: gsap.core.Tween | null = null, introOver = false;
   introDone.then(() => { introOver = true; if (!busy) showTitle(index); });
-  const lastPhoto = Math.max(0, cards.length - 1);
 
   // forward: the footage runs from this stop to the next, on its own
   const advance = () => {
-    if (index === GALLERY && gal.s < lastPhoto - 0.01) {
-      gsap.to(gal, { s: Math.min(lastPhoto, Math.round(gal.s) + 1), duration: 0.7, ease: 'power3.out', overwrite: true });
-      return;
-    }
+    if (index === GALLERY && carousel.index < lastPhoto) { carousel.navigateBy(1); return; }
     if (index >= STOPS.length - 1) { toFooter(); return; }
     const to = index + 1;
     busy = true;
@@ -348,10 +327,7 @@ export function startJourney(introDone: Promise<void>) {
   };
   // back: a short fade to the previous stop (the film never plays backwards)
   const retreat = () => {
-    if (index === GALLERY && gal.s > 0.01) {
-      gsap.to(gal, { s: Math.max(0, Math.round(gal.s) - 1), duration: 0.7, ease: 'power3.out', overwrite: true });
-      return;
-    }
+    if (index === GALLERY && carousel.index > 0) { carousel.navigateBy(-1); return; }
     if (index > 0) cut(index - 1);
   };
   const veil = $('.xp-veil')!;
@@ -360,7 +336,7 @@ export function startJourney(introDone: Promise<void>) {
     showTitle(-1);
     gsap.timeline({ onComplete: () => { index = to; busy = false; showTitle(to); } })
       .to(veil, { autoAlpha: 1, duration: 0.35, ease: 'power2.in' })
-      .add(() => { clock.t = STOPS[to]; if (to === GALLERY) gal.s = to < index ? lastPhoto : 0; })
+      .add(() => { clock.t = STOPS[to]; if (to === GALLERY) carousel.setFocus(to < index ? lastPhoto : 0, false); })
       .to(veil, { autoAlpha: 0, duration: 0.5, ease: 'power2.out' }, '+=0.05');
   }
   // past the last stop the page scrolls on to the footer; scrolling back to the top returns to the film
@@ -410,7 +386,7 @@ export function startJourney(introDone: Promise<void>) {
   canvasEl.addEventListener('click', () => hovered && board(hovered.h, hovered.obj));
   $$<HTMLAnchorElement>('.ch-actions a').forEach((a) => {
     const h = hots.find((x) => x.href === a.getAttribute('href'));
-    if (h) a.addEventListener('click', (e) => { e.preventDefault(); board(h, h === photoHot ? cards[Math.round(gal.s)] ?? reel : h.hit[0]); });
+    if (h) a.addEventListener('click', (e) => { e.preventDefault(); board(h, h.hit[0]); });
   });
 
   // the camera closes in on the thing, then its page opens
@@ -452,29 +428,20 @@ export function startJourney(introDone: Promise<void>) {
       camera.lookAt(look.x * 0.15, look.y * 0.1, -D);
       const at = busy ? -1 : index;
 
-      // the reel: the print in front is the one you have reached
-      cards.forEach((m, i) => {
-        const a = (i - gal.s) * STEP;
-        m.position.set(0, -R * Math.sin(a), R * (Math.cos(a) - 1));
-        m.rotation.x = a;
-        m.visible = Math.abs(a) < 1.1;
-        (m.material as THREE.MeshBasicMaterial).opacity = photoHot.fade * (1 - THREE.MathUtils.smoothstep(Math.abs(a), 0.3, 1.05));
-        const up = hovered?.obj === m ? 1.06 : 1;
-        m.scale.lerp(new THREE.Vector3(up, up, 1), Math.min(1, dt * 8));
-      });
+      // the carousel shows (and plays on its own) only while you are in the community
+      const inGallery = at === GALLERY && introOver;
+      if (galleryBox.classList.contains('on') !== inGallery) { galleryBox.classList.toggle('on', inGallery); carousel.setPaused(!inGallery); }
 
       // only the things of the chapter you are at show and answer the pointer
       let hit: typeof hovered = null;
       const cyc = (now * 0.6) % 1;
       for (const h of hots) {
         h.fade += ((h.ch === at && introOver ? 1 : 0) - h.fade) * Math.min(1, dt * 5);
-        if (h !== photoHot) {
-          h.group.visible = h.fade > 0.01;
-          h.group.children.forEach((o) => { ((o as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = h.fade * (o.name === 'pulse' ? 1 - cyc : 1); });
-          h.group.getObjectByName('pulse')!.scale.setScalar(1 + cyc * 1.2);
-          const sc = hovered?.h === h ? 1.3 : 1;
-          h.group.children[0].scale.lerp(new THREE.Vector3(sc, sc, 1), Math.min(1, dt * 8));
-        }
+        h.group.visible = h.fade > 0.01;
+        h.group.children.forEach((o) => { ((o as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = h.fade * (o.name === 'pulse' ? 1 - cyc : 1); });
+        h.group.getObjectByName('pulse')!.scale.setScalar(1 + cyc * 1.2);
+        const sc = hovered?.h === h ? 1.3 : 1;
+        h.group.children[0].scale.lerp(new THREE.Vector3(sc, sc, 1), Math.min(1, dt * 8));
         if (h.ch === at && pointed && finePointer()) {
           ray.setFromCamera(mouse, camera);
           const obj = ray.intersectObjects(h.hit.filter((o) => o.visible), false)[0]?.object;
@@ -489,7 +456,7 @@ export function startJourney(introDone: Promise<void>) {
       }
 
       // the hint sits on the door you go through next
-      const door = DOORS.find((d) => d.ch === at && (at !== GALLERY || gal.s > lastPhoto - 0.5));
+      const door = DOORS.find((d) => d.ch === at && (at !== GALLERY || carousel.index === lastPhoto));
       hint.classList.toggle('on', !!door);
       if (door) {
         const [x, y] = toScreen(onFrame(door.at[0], door.at[1]));
@@ -504,5 +471,5 @@ export function startJourney(introDone: Promise<void>) {
   renderer.setAnimationLoop(frameLoop);
   setTimeout(() => root.classList.add('ready'), 4000);
   // dev only: render any footage time or chapter on demand (for checking views without input)
-  if (import.meta.env.DEV) Object.assign(window, { __xp: { show(t: number) { clock.t = t; frameLoop(); }, stops: STOPS, keys: KEYS, gal, imgs, hots, camera, cards, video, next, prev, gsap, state: () => ({ index, busy, inFooter, t: clock.t, s: gal.s }) } });
+  if (import.meta.env.DEV) Object.assign(window, { __xp: { show(t: number) { clock.t = t; frameLoop(); }, stops: STOPS, keys: KEYS, carousel, imgs, hots, camera, video, next, prev, gsap, state: () => ({ index, busy, inFooter, t: clock.t, photo: carousel.index }) } });
 }

@@ -62,6 +62,8 @@ const chapters: Chapter[] = [
   </div>
   <div class="xp-exit" aria-hidden="true"></div>
   <div class="xp-veil" aria-hidden="true"></div>
+  <!-- the community photos (DepthCarousel), at the left of the cabin -->
+  <div class="xp-gallery"><div class="xp-gallery-carousel"></div></div>
   <span class="xp-tip label" aria-hidden="true"></span>
   <!-- the hint on the door you go through next -->
   <p class="xp-door" aria-hidden="true"><i></i><span class="label">Mai departe</span><b></b><span class="label">Scroll ↓</span></p>
@@ -132,7 +134,11 @@ const chapters: Chapter[] = [
   .xp-on .chapters { height: 100vh; }
   .xp-on .ch { min-height: 0; height: 0; padding: 0; }
   .xp-lock, .xp-lock body { overflow: hidden; }
-  .xp-veil { position: fixed; inset: 0; z-index: 3; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; }
+  .xp-veil { position: fixed; inset: 0; z-index: 4; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; }
+  /* the community's photo carousel: left of the cabin, clear of the door in the middle */
+  .xp-gallery { display: none; }
+  .xp-on .xp-gallery { position: fixed; left: 3vw; top: 50%; z-index: 3; display: block; width: min(40vw, 600px); height: min(68vh, 560px); translate: 0 -50%; opacity: 0; visibility: hidden; transition: opacity .8s var(--ease-out), visibility .8s; }
+  .xp-gallery.on { opacity: 1; visibility: visible; }
   .xp-on .ch-inner { position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 var(--pad) 0 7vw; text-align: left; }
   .ch-inner { max-width: 100%; }
   .ch-inner a, .ch-inner button { pointer-events: auto; }
