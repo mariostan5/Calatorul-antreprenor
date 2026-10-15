@@ -7,64 +7,75 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 body {
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background-color .4s, color .4s;
 }
-em, i { font-style: normal; }
+i { font-style: normal; }
 img, video, canvas { display: block; max-width: 100%; }
 /* <picture> steps aside so its <img> sizes against the real container */
 picture { display: contents; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 ol, ul { list-style: none; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
-::selection { background: var(--gold); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; border-radius: var(--radius); }
+::selection { background: var(--accent); color: #0A0A0A; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- type ---------- */
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; letter-spacing: -.005em; line-height: 1.02; }
+/* the signature: one key word of every big headline in italic serif */
+:is(h1, h2, h3, .h2, .display) em { font-family: var(--italic); font-style: italic; font-weight: 400; font-stretch: 100%; letter-spacing: -.01em; }
+.h2 { font-family: var(--display); font-weight: 600; font-size: clamp(40px, 5.6vw, 96px); line-height: 1; letter-spacing: -.01em; text-wrap: balance; }
+.h2-md { font-size: clamp(34px, 4vw, 68px); }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.label { font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; }
-.kicker { display: inline-block; color: var(--gold); }
-.h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(42px, 6vw, 112px); line-height: .98; letter-spacing: -.015em; text-wrap: balance; }
-.h2-md { font-size: clamp(38px, 4.4vw, 80px); }
-.kicker + .h2 { margin-top: 16px; }
-.muted { color: rgba(243, 238, 228, .68); }
+.label { font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.kicker { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); }
+.kicker::before { content: ""; width: 6px; height: 6px; background: var(--accent); }
+.kicker + .h2 { margin-top: 18px; }
+.muted { color: var(--muted); }
 /* SplitText line masks: room for descenders and diacritics */
 .ln-mask { padding-bottom: .12em; margin-bottom: -.12em; }
 
-/* ---------- buttons ---------- */
+/* ---------- buttons: mono uppercase, a small icon on the left; they invert on hover ---------- */
 .btn {
-  position: relative; isolation: isolate; overflow: hidden;
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 15px 26px; border-radius: 999px; border: 1px solid transparent;
-  font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer;
-  transition: color .5s var(--ease-out), border-color .5s, background-color .5s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 15px 22px; border-radius: var(--radius); border: 1px solid var(--fg);
+  font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  white-space: nowrap; cursor: pointer; transition: background-color .35s, color .35s, border-color .35s;
 }
-/* gold: a cream fill rises from below on hover */
-.btn-gold { background: var(--gold); color: var(--ink); }
-.btn-gold::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--cream); transform: translateY(101%); transition: transform .6s var(--ease-out); }
-.btn-gold:hover::before { transform: none; }
-.btn-ghost { border-color: rgba(243, 238, 228, .45); background: rgba(4, 11, 31, .25); color: var(--cream); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.btn-ghost:hover { border-color: var(--cream); background: rgba(243, 238, 228, .12); }
+.btn::before {
+  content: ""; flex: none; width: 11px; height: 11px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 10 10 2M4 2h6v6' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 10 10 2M4 2h6v6' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* primary: solid white, black text (gold is the old name, kept so every page picks it up) */
+.btn-primary, .btn-gold { background: var(--btn-bg); color: var(--btn-fg); border-color: var(--btn-bg); }
+.btn-primary:hover, .btn-gold:hover { background: transparent; color: var(--fg); border-color: var(--fg); }
+/* secondary: transparent, 1px border */
+.btn-secondary, .btn-ghost, .btn-line { background: transparent; color: var(--fg); }
+.btn-secondary:hover, .btn-ghost:hover, .btn-line:hover { background: var(--fg); color: var(--bg); }
 
-/* ---------- sections sit over the jet ---------- */
+/* ---------- sections ---------- */
 main { position: relative; z-index: 1; overflow-x: clip; }
 main > section, .calm > section { position: relative; isolation: isolate; }
+/* simple pages (destinations): room for the fixed nav */
+.page { padding: calc(64px + 10vh) var(--pad) 16vh; background: var(--bg); }
 
 /* ---------- WhatsApp ---------- */
 .wa {
-  position: fixed; right: 18px; bottom: 18px; z-index: 45; width: 50px; height: 50px; border-radius: 50%;
-  display: grid; place-items: center; color: var(--cream);
-  background: rgba(7, 20, 51, .7); border: 1px solid rgba(216, 192, 138, .45);
+  position: fixed; right: 18px; bottom: 18px; z-index: 45; width: 48px; height: 48px; border-radius: var(--radius);
+  display: grid; place-items: center; color: var(--fg);
+  background: color-mix(in srgb, var(--card) 85%, transparent); border: 1px solid var(--line-strong);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, .35); transition: transform .6s var(--ease-out), opacity .4s, background-color .4s;
+  transition: transform .6s var(--ease-out), opacity .4s, background-color .4s, color .4s;
 }
-.wa:hover { background: #1f8f4e; border-color: transparent; }
+.wa:hover { background: var(--fg); color: var(--bg); }
 .js .wa:not(.show) { transform: scale(.5); opacity: 0; pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {

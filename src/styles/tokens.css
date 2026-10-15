@@ -1,24 +1,49 @@
-/* Self-hosted fonts (Fontsource, font-display: swap). No italics. */
-@import '@fontsource/cormorant-garamond/400.css';
-@import '@fontsource/cormorant-garamond/500.css';
-@import '@fontsource/cormorant-garamond/600.css';
-@import '@fontsource-variable/manrope/wght.css';
-@import '@fontsource/dm-mono/400.css';
-@import '@fontsource/dm-mono/500.css';
-
+/* Design system: the Călătorul Antreprenor brand (calatorulantreprenor.com): white, near-black text,
+   yellow #FACC15 for what you press, voyage blue #115089 for thin lines and small accents, Oswald titles,
+   Inter text. Light by default; the dark theme is the toggle in the nav. Fonts load in Base.astro. */
 :root {
-  --ink: #040B1F;
-  --navy: #071433;
-  --royal: #0B1E4F;
-  --cream: #F3EEE4;
-  --gold: #D8C08A;
+  --bg: #FAFAF9;
+  --card: #FFFFFF;
+  --card-2: #F5F5F4;
+  --fg: #0A0A0A;
+  --muted: #78716C;
+  --line: #E7E5E4;
+  --line-strong: #C9C5C2;
+  --accent: #FACC15; /*      yellow: fills (buttons, the nav block, small squares) */
+  --accent-ink: #115089; /*  voyage blue: 1px lines, small text accents, focus */
+  --btn-bg: #FACC15;
+  --btn-fg: #0A0A0A;
 
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Manrope Variable', system-ui, sans-serif;
-  --mono: 'DM Mono', ui-monospace, monospace;
+  /* older names still used by the page sections: they follow the theme */
+  --ink: var(--bg);
+  --navy: var(--card);
+  --royal: var(--card-2);
+  --cream: var(--fg);
+  --gold: var(--accent-ink);
 
-  --pad: clamp(28px, 4vw, 64px);
+  --display: 'Oswald', system-ui, sans-serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --italic: 'Instrument Serif', Georgia, serif; /* the one key word in a headline */
+  --serif: var(--display);
+
+  --radius: 6px; /*    buttons, chips */
+  --radius-lg: 12px; /* cards */
+  --pad: clamp(20px, 4vw, 64px);
   /* CSS mirrors of the GSAP curves: expo.out (appear), power3.inOut (transition) */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0C0A09;
+  --card: #1C1917;
+  --card-2: #292524;
+  --fg: #FAFAF9;
+  --muted: #A8A29E;
+  --line: rgba(255, 255, 255, .09);
+  --line-strong: rgba(255, 255, 255, .24);
+  --accent-ink: #6CB4F0;
+  color-scheme: dark;
 }

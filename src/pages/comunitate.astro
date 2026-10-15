@@ -36,7 +36,7 @@ const wall = posts.slice(0, 12);
   <main class="cm">
     <header class="cm-hero">
       <p class="label kicker cm-in">(Lounge) · Comunitatea</p>
-      <h1 class="cm-title"><span class="cm-line">Jurnalul de bord</span><span class="cm-line cm-serif">al comunității.</span></h1>
+      <h1 class="cm-title"><span class="cm-line">Jurnalul de bord <em>al comunității.</em></span></h1>
       <p class="cm-lead cm-in">Poze din vacanțe, momente de la evenimente și oamenii cu care călătorești. Postează și tu din zborul tău.</p>
       <div class="cm-hero-row cm-in">
         <p class="label num cm-stats">700+ membri · {posts.length} postări · {places.length} destinații</p>
@@ -142,13 +142,11 @@ const wall = posts.slice(0, 12);
 </Base>
 
 <style is:global>
-  .cm { position: relative; padding-top: 130px; background: radial-gradient(70% 40% at 80% 0%, rgba(11, 30, 79, .9), transparent 70%), var(--navy); }
+  .cm { position: relative; padding-top: 130px; background: radial-gradient(70% 40% at 80% 0%, color-mix(in srgb, var(--royal) 90%, transparent), transparent 70%), var(--navy); }
   .cm-hero { max-width: 1400px; margin: 0 auto; padding: 8vh var(--pad) 4vh; }
-  .cm-title { display: flex; flex-direction: column; margin: 22px 0 26px; font-weight: 400; line-height: .95; }
-  .cm-title .cm-line:first-child { font-family: var(--sans); font-weight: 300; font-size: clamp(40px, 5.4vw, 96px); text-transform: uppercase; }
-  .cm-serif { font-family: var(--serif); font-weight: 500; font-size: clamp(52px, 7vw, 128px); letter-spacing: -.015em; }
-  .cm-lead { max-width: 52ch; font-size: clamp(16px, 1.3vw, 20px); color: rgba(243, 238, 228, .78); }
-  .cm-hero-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 34px; padding-top: 22px; border-top: 1px solid rgba(216, 192, 138, .3); }
+  .cm-title { max-width: 14ch; margin: 22px 0 26px; font-size: clamp(44px, 7.4vw, 128px); line-height: .94; letter-spacing: -.01em; }
+  .cm-lead { max-width: 52ch; font-size: clamp(16px, 1.3vw, 20px); color: color-mix(in srgb, var(--cream) 78%, transparent); }
+  .cm-hero-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 34px; padding-top: 22px; border-top: 1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
   .cm-stats { color: var(--gold); }
 
   /* the drifting wall of polaroids */
@@ -163,20 +161,20 @@ const wall = posts.slice(0, 12);
   .photo img { width: 100%; height: 100%; object-fit: cover; }
   .js .photo img { filter: brightness(.25) sepia(.9) saturate(.3) blur(3px); transition: filter 3s cubic-bezier(.3, .1, .2, 1); }
   .js .polaroid.dev .photo img { filter: none; }
-  .polaroid figcaption { height: 46px; display: grid; place-items: center; font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--ink); }
+  .polaroid figcaption { height: 46px; display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: 20px; color: var(--ink); }
 
   /* feed + aside */
   .cm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(40px, 5vw, 80px); max-width: 1400px; margin: 0 auto; padding: 0 var(--pad) 18vh; align-items: start; }
   .cm-tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; margin-bottom: 28px; }
-  .cm-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: rgba(4, 11, 31, .5); border: 1px solid rgba(243, 238, 228, .12); }
+  .cm-tabs { display: flex; gap: 6px; padding: 5px; border-radius: var(--radius); background: color-mix(in srgb, var(--ink) 50%, transparent); border: 1px solid color-mix(in srgb, var(--cream) 12%, transparent); }
   .cm-tabs input { position: absolute; opacity: 0; pointer-events: none; }
-  .cm-tabs span { display: block; padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: rgba(243, 238, 228, .75); cursor: pointer; transition: background-color .4s, color .4s; }
+  .cm-tabs span { display: block; padding: 9px 18px; border-radius: var(--radius); font-size: 14px; font-weight: 600; color: color-mix(in srgb, var(--cream) 75%, transparent); cursor: pointer; transition: background-color .4s, color .4s; }
   .cm-tabs input:checked + span { background: var(--gold); color: var(--ink); }
   .cm-tabs input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .cm-select select { height: 44px; padding: 0 40px 0 18px; border-radius: 999px; border: 1px solid rgba(243, 238, 228, .2); background: rgba(4, 11, 31, .5); color: var(--cream); font-size: 14px; }
+  .cm-select select { height: 44px; padding: 0 40px 0 18px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--cream) 20%, transparent); background: color-mix(in srgb, var(--ink) 50%, transparent); color: var(--cream); font-size: 14px; }
   .cm-select option { color: var(--ink); }
   .cm-grid { columns: 2; column-gap: 26px; }
-  .post { break-inside: avoid; margin-bottom: 26px; border-radius: 20px; overflow: hidden; background: rgba(4, 11, 31, .55); border: 1px solid rgba(243, 238, 228, .1); }
+  .post { break-inside: avoid; margin-bottom: 26px; border-radius: var(--radius); overflow: hidden; background: color-mix(in srgb, var(--ink) 55%, transparent); border: 1px solid color-mix(in srgb, var(--cream) 10%, transparent); }
   .post[hidden] { display: none; }
   .post-media { display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in; overflow: hidden; background: var(--royal); }
   .post-media img { width: 100%; height: auto; transition: transform 1.4s var(--ease-out); }
@@ -184,64 +182,64 @@ const wall = posts.slice(0, 12);
   .post-body { padding: 18px 20px 16px; }
   .post-head { display: flex; align-items: center; gap: 12px; }
   .post-head b { display: block; font-size: 15px; }
-  .post-head .label { display: block; font-size: 10px; color: rgba(243, 238, 228, .55); letter-spacing: .12em; }
+  .post-head .label { display: block; font-size: 10px; color: color-mix(in srgb, var(--cream) 55%, transparent); letter-spacing: .12em; }
   .avatar { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--gold); color: var(--ink); font-weight: 700; font-size: 13px; }
-  .post-tag { margin-left: auto; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(216, 192, 138, .45); color: var(--gold); font-size: 9.5px; }
-  .post-body > p { margin: 14px 0; color: rgba(243, 238, 228, .85); }
-  .post-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(243, 238, 228, .08); }
-  .post-foot .label { font-size: 10px; color: rgba(243, 238, 228, .5); text-align: right; }
-  .like { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(243, 238, 228, .18); background: none; cursor: pointer; transition: background-color .3s, border-color .3s, color .3s; }
+  .post-tag { margin-left: auto; padding: 5px 10px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); color: var(--gold); font-size: 9.5px; }
+  .post-body > p { margin: 14px 0; color: color-mix(in srgb, var(--cream) 85%, transparent); }
+  .post-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid color-mix(in srgb, var(--cream) 8%, transparent); }
+  .post-foot .label { font-size: 10px; color: color-mix(in srgb, var(--cream) 50%, transparent); text-align: right; }
+  .like { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--cream) 18%, transparent); background: none; cursor: pointer; transition: background-color .3s, border-color .3s, color .3s; }
   .like[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--ink); }
-  .post-local { padding: 4px 10px; border-radius: 999px; background: var(--cream); color: var(--ink); font-size: 9.5px; }
-  .cm-empty { color: rgba(243, 238, 228, .6); }
+  .post-local { padding: 4px 10px; border-radius: var(--radius); background: var(--cream); color: var(--ink); font-size: 9.5px; }
+  .cm-empty { color: color-mix(in srgb, var(--cream) 60%, transparent); }
 
   .cm-aside { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 20px; }
-  .cm-card { padding: 22px; border-radius: 20px; background: rgba(4, 11, 31, .55); border: 1px solid rgba(216, 192, 138, .25); }
+  .cm-card { padding: 22px; border-radius: var(--radius); background: color-mix(in srgb, var(--ink) 55%, transparent); border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent); }
   .cm-card h2 { margin-bottom: 16px; font-weight: 400; color: var(--gold); }
-  .mini-pass { display: flex; gap: 14px; align-items: center; padding: 12px; margin-top: 10px; border-radius: 12px; background: var(--cream); color: var(--ink); transition: translate .6s var(--ease-out); }
+  .mini-pass { display: flex; gap: 14px; align-items: center; padding: 12px; margin-top: 10px; border-radius: var(--radius); background: var(--cream); color: var(--ink); transition: translate .6s var(--ease-out); }
   .mini-pass:hover { translate: 0 -3px; }
-  .mini-date { flex: none; width: 52px; text-align: center; font-size: 11px; text-transform: uppercase; border-right: 2px dashed rgba(4, 11, 31, .2); padding-right: 10px; }
-  .mini-date b { display: block; font-family: var(--serif); font-size: 28px; line-height: 1; }
-  .mini-pass > span:last-child b { display: block; font-family: var(--serif); font-size: 19px; line-height: 1.1; }
-  .mini-pass .label { font-size: 9.5px; color: rgba(4, 11, 31, .6); }
-  .cm-rules { counter-reset: r; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: rgba(243, 238, 228, .78); }
+  .mini-date { flex: none; width: 52px; text-align: center; font-size: 11px; text-transform: uppercase; border-right: 2px dashed color-mix(in srgb, var(--ink) 20%, transparent); padding-right: 10px; }
+  .mini-date b { display: block; font-family: var(--display); font-size: 28px; line-height: 1; }
+  .mini-pass > span:last-child b { display: block; font-family: var(--display); font-size: 19px; line-height: 1.1; }
+  .mini-pass .label { font-size: 9.5px; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  .cm-rules { counter-reset: r; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: color-mix(in srgb, var(--cream) 78%, transparent); }
   .cm-rules li { counter-increment: r; display: flex; gap: 10px; }
   .cm-rules li::before { content: "0" counter(r); font-family: var(--mono); font-size: 11px; color: var(--gold); padding-top: 3px; }
 
   /* composer and lightbox */
   dialog { margin: auto; border: 0; color: var(--cream); }
-  dialog::backdrop { background: rgba(4, 11, 31, .82); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-  .composer { width: min(560px, calc(100vw - 32px)); padding: 0; border-radius: 22px; background: var(--navy); border: 1px solid rgba(216, 192, 138, .35); }
+  dialog::backdrop { background: color-mix(in srgb, var(--ink) 82%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .composer { width: min(560px, calc(100vw - 32px)); padding: 0; border-radius: var(--radius); background: var(--navy); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); }
   .composer-form { display: flex; flex-direction: column; gap: 16px; padding: 26px; }
   .composer-form header { display: flex; justify-content: space-between; align-items: center; }
-  .composer-form h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; }
-  .composer-x, .lightbox-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(243, 238, 228, .25); background: none; cursor: pointer; }
-  .drop { position: relative; display: grid; place-items: center; min-height: 160px; border-radius: 14px; border: 1px dashed rgba(216, 192, 138, .5); overflow: hidden; cursor: pointer; text-align: center; }
+  .composer-form h2 { font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: 34px; }
+  .composer-x, .lightbox-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--cream) 25%, transparent); background: none; cursor: pointer; }
+  .drop { position: relative; display: grid; place-items: center; min-height: 160px; border-radius: var(--radius); border: 1px dashed color-mix(in srgb, var(--gold) 50%, transparent); overflow: hidden; cursor: pointer; text-align: center; }
   .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .drop-hint { padding: 0 20px; color: rgba(243, 238, 228, .7); font-size: 14px; }
+  .drop-hint { padding: 0 20px; color: color-mix(in srgb, var(--cream) 70%, transparent); font-size: 14px; }
   .drop-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .field { display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .field .label { color: var(--gold); }
-  .field textarea, .field input, .field select { padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(243, 238, 228, .2); background: rgba(4, 11, 31, .55); color: var(--cream); font-size: 15px; resize: vertical; }
+  .field textarea, .field input, .field select { padding: 12px 14px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--cream) 20%, transparent); background: color-mix(in srgb, var(--ink) 55%, transparent); color: var(--cream); font-size: 15px; resize: vertical; }
   .field option { color: var(--ink); }
   .field-row { display: flex; gap: 12px; }
-  .composer-note { font-size: 12.5px; color: rgba(243, 238, 228, .6); }
+  .composer-note { font-size: 12.5px; color: color-mix(in srgb, var(--cream) 60%, transparent); }
   .composer .btn { align-self: flex-start; }
   .lightbox { max-width: 92vw; max-height: 92vh; padding: 0; background: none; overflow: visible; }
-  .lightbox img { max-width: 88vw; max-height: 80vh; border-radius: 16px; box-shadow: 0 40px 120px rgba(0, 0, 0, .6); }
+  .lightbox img { max-width: 88vw; max-height: 80vh; border-radius: var(--radius); box-shadow: 0 40px 120px rgba(0, 0, 0, .6); }
   .lightbox-cap { margin-top: 14px; text-align: center; color: var(--gold); }
   .lightbox-x { position: absolute; top: -52px; right: 0; color: var(--cream); }
 
   /* the pass that tears open on arrival */
   .tear { display: none; }
   .from-ticket .tear { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: var(--cream); pointer-events: none; }
-  .tear-pass { position: relative; display: grid; grid-template-columns: 1fr 130px; width: min(680px, 86vw); border-radius: 18px; background: #fff; color: var(--ink); box-shadow: 0 40px 100px rgba(4, 11, 31, .25); }
-  .tear-main { display: flex; flex-direction: column; gap: 10px; padding: 30px 34px; border-right: 2px dashed rgba(4, 11, 31, .25); }
+  .tear-pass { position: relative; display: grid; grid-template-columns: 1fr 130px; width: min(680px, 86vw); border-radius: var(--radius); background: #fff; color: var(--ink); box-shadow: 0 40px 100px color-mix(in srgb, var(--ink) 25%, transparent); }
+  .tear-main { display: flex; flex-direction: column; gap: 10px; padding: 30px 34px; border-right: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent); }
   .tear-main .label { color: var(--royal); }
-  .tear-main b { font-family: var(--serif); font-weight: 600; font-size: clamp(44px, 6vw, 72px); line-height: 1; }
-  .tear-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: rgba(4, 11, 31, .65); }
+  .tear-main b { font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: clamp(44px, 6vw, 72px); line-height: 1; }
+  .tear-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: color-mix(in srgb, var(--ink) 65%, transparent); }
   .tear-stub { display: grid; place-content: center; text-align: center; font-size: 20px; line-height: 1.3; }
-  .tear-stamp { position: absolute; right: 150px; top: 24px; padding: 6px 14px; border: 2px solid var(--royal); border-radius: 6px; color: var(--royal); font-family: var(--mono); font-size: 15px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: rotate(-12deg); }
+  .tear-stamp { position: absolute; right: 150px; top: 24px; padding: 6px 14px; border: 2px solid var(--royal); border-radius: var(--radius); color: var(--royal); font-family: var(--mono); font-size: 15px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: rotate(-12deg); }
 </style>
 
 <script>

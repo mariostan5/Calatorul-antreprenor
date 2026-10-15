@@ -46,6 +46,8 @@ const community = defineCollection({
       home: z.string(),
       date: z.coerce.date(),
       text: z.string(),
+      /** a video testimonial (path under /public or a URL): the home page card then plays it */
+      video: z.string().optional(),
     }),
 });
 

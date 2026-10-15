@@ -1,7 +1,7 @@
 # Proiect
 Site-ul „Călătorul Antreprenor”: club de călătorii (Club) + parte de business (Business Class). Limba: română.
-Concept: tot site-ul e un ZBOR CU UN AVION PRIVAT. Referința de stil aleasă de utilizator: https://pasqua.it/ (scenă 3D în timp real, capitole, titluri mari, „Descoperă”, săgeți capitol anterior/următor).
-Pagina principală = un zbor filmat, randat în Three.js: intro (logo-ul iese din nori și se așază în meniu), apoi la scroll cadrele video (avionul printre nori → intrarea în cockpit → cabina → lounge) și două poze (dormitorul, ușa spre coastă), pe 6 capitole: I Decolarea (hero) · II Business Class (cockpit, panoul de bord) · III Comunitatea (masa dintre scaune, biletele) · IV Academia (lounge, cartea) · V Clubul (dormitorul, patul) · VI Destinații (ușa deschisă). Click pe obiectul fiecărui capitol → pagina lui (biletele → /comunitate: feed cu postări din vacanțe și evenimente; deocamdată demo, fără conturi).
+Direcție de design: brandul Călătorul Antreprenor de pe calatorulantreprenor.com (fundal #FAFAF9, carduri albe cu bordură #E7E5E4, galben #FACC15 pentru ce se apasă, albastru #115089 pentru linii și accente mici, titluri Oswald, text Inter), pe structura „creative-tech studio” (grilă cu linii de 1px, etichete Geist Mono). Temă luminoasă implicit, cea întunecată din meniu. Tot textul în română.
+Pagina principală (src/pages/index.astro): hero ca pe getartcraft.com: intro (logo-ul singur în centru → urcă la locul lui, „CĂLĂTORUL” / „ANTREPRENOR” se scriu literă cu literă, textul vine din blur) și spirala three.js din src/scripts/spiral.ts (doar poze din călătoriile clubului, din folderul Desktop/Travorium → public/spiral/pNN.webp, care plutesc lent spre tine, arce în culorile brandului; la hover spirala se oprește, cardul crește pe loc la ~27% din lățimea ecranului, ca pe getartcraft.com; click = vizualizare pe tot ecranul). Apoi marquee, 01 Beneficii, 02 Libertate, 03 Comunitate, 04 Oportunitate, CTA final, footer; pe desktop indicatorul de secțiuni + rigla din dreapta.
 Conținutul detaliat stă pe paginile deschise de „Descoperă”: /club, /destinatii, /business-class, /comunitate.
 Destinațiile sunt GENERICE și rotative (Bali, Maldive, Bora Bora, Dubai, Tokyo, Islanda, Machu Picchu, Cape Town), nu o destinație fixă.
 
@@ -10,12 +10,12 @@ Referință existentă: `legacy/` (index.html, site.css, site.js, assets/) = pro
 `docs/Plan_site_nou_CA.docx`: încă nu există în proiect; când apare, completează acest fișier cu ce lipsește din el.
 
 # Stack
-Astro + GSAP (ScrollTrigger, SplitText) + Lenis + Three.js (încărcat dinamic, după prima afișare). Găzduire pe Cloudflare Pages. Conținut editabil cu Keystatic. Formulare și leaduri în Brevo. Anti-spam: Cloudflare Turnstile.
+Astro + GSAP (ScrollTrigger, SplitText) + Lenis. Găzduire pe Vercel (import din GitHub; fiecare push pe main publică). Fonturi din Google Fonts (Base.astro). Conținut editabil cu Keystatic. Formulare și leaduri în Brevo. Anti-spam: Cloudflare Turnstile.
 
-# Design tokens (nu inventa altele)
-ink #040B1F · navy #071433 · royal #0B1E4F · cream #F3EEE4 · gold #D8C08A
-Fonturi: Cormorant Garamond (titluri), Manrope (text), DM Mono (cifre și etichete). FĂRĂ italice.
-Club = aer, lumină, cer, alb cald. Business Class = bleumarin profund, auriu fin, mai puțină mișcare.
+# Design tokens (nu inventa altele; sursa: src/styles/tokens.css)
+Sursa adevărului: src/styles/tokens.css (--accent = galben pentru suprafețe, --accent-ink = albastru pentru linii/text mic; numele vechi --ink, --navy, --cream, --gold sunt alias-uri). Logo: public/brand-logo.webp (rotund, acuarelă).
+Fonturi: Oswald 600–700 pentru titluri · Inter pentru text · Geist Mono MAJUSCULE cu 0.12em pentru meniu, etichete, butoane. În fiecare titlu mare, UN cuvânt-cheie în Instrument Serif italic (`<em>`), cu punctuația în interiorul lui.
+Butoane: principal = galben cu text negru (pe site-ul vechi textul alb pe galben nu se citea); secundar = transparent cu contur; colțuri 6px, carduri 12px.
 
 # Reguli de animație
 - Lenis cu inerție fină. Nu bloca niciodată scroll-ul.
@@ -23,7 +23,7 @@ Club = aer, lumină, cer, alb cald. Business Class = bleumarin profund, auriu fi
 - Titluri: rânduri care urcă din mască (SplitText), cu 0.08s între ele.
 - Imagini: se deschid din mască și se micșorează de la 115% la 100%.
 - Cifre: urcă de la 0 în 1.6s, cu tabular-nums.
-- Semnătura site-ului: linia punctată a avionului.
+- Fiecare secțiune intră în focus la scroll (blur 8px → 0, opacitate .4 → 1); secțiunile fixate (pin) au data-pinned și nu primesc efectul.
 - prefers-reduced-motion: rămân doar fade-uri. Textul trebuie să fie lizibil și fără JavaScript.
 - Pe mobil: secțiunile fixate sunt mai scurte, cele orizontale devin carusel cu swipe, fără cursor custom.
 

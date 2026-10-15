@@ -2,71 +2,73 @@
 import { config } from '../../config';
 
 const cols = [
-  ['Club', [['Beneficii', '/#club'], ['Destinații', '/#destinatii'], ['Cum funcționează', '/#cum']]],
-  ['Business Class', [['Programul', '/#business'], ['Workshop-uri', '/#academie'], ['Webinar gratuit', config.webinarUrl]]],
-  ['Comunitate', [['Galerie', '/comunitate'], ['Întrebări', '/#intrebari'], ['WhatsApp', config.whatsapp]]],
-  ['Legal', [['Termeni și condiții', '/termeni'], ['Confidențialitate', '/confidentialitate'], ['Cookies', '/cookies'], ['Nota despre venituri', '/nota-venituri']]],
+  ['Club', [['Beneficii', '/club'], ['Destinații', '/destinatii'], ['Comunitate', '/comunitate'], ['Întrebări', '/club#intrebari']]],
+  ['Oportunitate', [['Business Class', '/business-class'], ['Cum începi', '/#oportunitate'], ['Nota despre venituri', '/nota-venituri']]],
+  ['Resurse', [['Academie', '/business-class#academie'], ['Webinar gratuit', config.webinarUrl], ['Galeria comunității', '/comunitate']]],
 ] as const;
+const legal = [['Termeni și condiții', '/termeni'], ['Confidențialitate', '/confidentialitate'], ['Cookies', '/cookies']] as const;
 const social = Object.entries(config.social);
 const c = config.company;
 ---
-<footer class="foot">
-  <div class="foot-inner">
-    <div class="foot-top">
-      <div class="foot-brand">
-        <img src="/logo-mark.png" alt="Călătorul Antreprenor" width="345" height="280" />
-        <p>Clubul românilor din toată lumea care călătoresc mai mult și construiesc, în paralel, ceva al lor.</p>
-        <a class="btn btn-gold" href={config.webinarUrl}>Webinar gratuit</a>
+<footer class="foot" id="contact">
+  <div class="foot-top">
+    <div class="foot-brand">
+      <img src="/brand-logo.webp" alt="Călătorul Antreprenor" width="240" height="240" />
+      <p>Clubul românilor din toată lumea care călătoresc mai mult și construiesc, în paralel, ceva al lor.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Subsol">
+      {cols.map(([h, links]) => (
+        <div><h4 class="label">{h}</h4>{links.map(([t, href]) => <a href={href}>{t}</a>)}</div>
+      ))}
+      <div>
+        <h4 class="label">Contact</h4>
+        <a class="foot-mail" href={`mailto:${c.email}`}>{c.email}</a>
+        <a href={config.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+        <span class="foot-social">{social.map(([n, href]) => <a href={href} rel="noopener">{n}</a>)}</span>
       </div>
-      <nav class="foot-cols" aria-label="Subsol">
-        {cols.map(([h, links]) => (
-          <div><h4 class="label">{h}</h4>{links.map(([t, href]) => <a href={href}>{t}</a>)}</div>
-        ))}
-      </nav>
-    </div>
-    <div class="foot-word" aria-hidden="true">Călătorul Antreprenor</div>
-    <div class="foot-legal">
-      <p>{c.name} · CUI {c.cui} · {c.regCom} · {c.address} · {c.email}</p>
-      <p class="foot-anpc">
-        <a href="https://anpc.ro/" rel="noopener" target="_blank">ANPC</a>
-        <a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">Soluționarea alternativă a litigiilor (SAL)</a>
-        <a href="https://consumer-redress.ec.europa.eu/" rel="noopener" target="_blank">Soluționarea online a litigiilor (SOL)</a>
-      </p>
-    </div>
-    <div class="foot-bottom">
-      <span>© {new Date().getFullYear()} Călătorul Antreprenor</span>
-      <span class="foot-social">{social.map(([n, href]) => <a href={href} rel="noopener">{n[0].toUpperCase() + n.slice(1)}</a>)}</span>
-      <span>Făcut pentru românii din toată lumea</span>
-    </div>
+    </nav>
+  </div>
+  <div class="foot-legal">
+    <p>{c.name} · CUI {c.cui} · {c.regCom} · {c.address}</p>
+    <p class="foot-links">
+      {legal.map(([t, href]) => <a href={href}>{t}</a>)}
+      <a href="https://anpc.ro/" rel="noopener" target="_blank">ANPC</a>
+      <a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">Soluționarea alternativă a litigiilor (SAL)</a>
+      <a href="https://consumer-redress.ec.europa.eu/" rel="noopener" target="_blank">Soluționarea online a litigiilor (SOL)</a>
+    </p>
+  </div>
+  <div class="foot-bottom label">
+    <span>© {new Date().getFullYear()} Călătorul Antreprenor</span>
+    <span>Făcut pentru românii din toată lumea</span>
   </div>
 </footer>
 
 <style is:global>
-  .foot { position: relative; z-index: 2; overflow: hidden; background: var(--ink); border-top: 1px solid rgba(243, 238, 228, .08); }
-  .foot-inner { padding: 14vh var(--pad) 28px; }
-  .foot-top { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; }
-  .foot-brand img { width: auto; height: 64px; }
-  .foot-brand p { max-width: 34ch; margin: 22px 0 26px; color: rgba(243, 238, 228, .68); }
-  .foot-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-  .foot-cols h4 { margin-bottom: 16px; font-weight: 400; color: var(--gold); }
-  .foot-cols a { display: block; padding: 5px 0; color: rgba(243, 238, 228, .7); font-size: 15px; transition: color .3s; }
-  .foot-cols a:hover { color: var(--cream); }
-  .foot-word { margin: 12vh 0 5vh; font-family: var(--serif); font-weight: 500; font-size: 8.6vw; line-height: .9; letter-spacing: -.03em; white-space: nowrap; color: var(--cream); }
-  .foot-legal { display: flex; flex-direction: column; gap: 10px; padding: 22px 0; border-top: 1px solid rgba(243, 238, 228, .08); font-size: 13px; color: rgba(243, 238, 228, .6); }
-  .foot-anpc { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .foot-anpc a, .foot-social a { text-decoration: underline; text-underline-offset: 3px; }
-  .foot-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding-top: 22px; border-top: 1px solid rgba(243, 238, 228, .08); font-size: 13px; color: rgba(243, 238, 228, .6); }
-  .foot-social { display: flex; gap: 16px; }
-  @media (max-width: 900px) {
+  .foot { position: relative; z-index: 2; background: var(--bg); border-top: 1px solid var(--line); }
+  .foot-top { display: grid; grid-template-columns: 1fr 2.2fr; border-bottom: 1px solid var(--line); }
+  .foot-brand { padding: 64px var(--pad); border-right: 1px solid var(--line); }
+  .foot-brand img { width: 72px; height: 72px; border-radius: 50%; }
+  .foot-brand p { max-width: 34ch; margin-top: 22px; color: var(--muted); }
+  .foot-cols { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .foot-cols > div { display: flex; flex-direction: column; gap: 4px; padding: 64px 28px; border-right: 1px solid var(--line); }
+  .foot-cols > div:last-child { border-right: 0; }
+  .foot-cols h4 { margin-bottom: 14px; font-weight: 400; color: var(--muted); }
+  .foot-cols a { padding: 3px 0; font-size: 15px; color: var(--fg); transition: color .3s; }
+  .foot-cols a:hover { color: var(--accent-ink); }
+  .foot-mail { font-family: var(--mono); font-size: 13px !important; word-break: break-all; }
+  .foot-social { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
+  .foot-social a { font-family: var(--mono); font-size: 11px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--muted) !important; }
+  .foot-social a:hover { color: var(--fg) !important; }
+  .foot-legal { display: flex; flex-direction: column; gap: 10px; padding: 24px var(--pad); border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .foot-links a { text-decoration: underline; text-underline-offset: 3px; }
+  .foot-links a:hover { color: var(--fg); }
+  .foot-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px var(--pad); color: var(--muted); }
+  @media (max-width: 980px) {
     .foot-top { grid-template-columns: 1fr; }
+    .foot-brand { border-right: 0; border-bottom: 1px solid var(--line); }
     .foot-cols { grid-template-columns: 1fr 1fr; }
-    .foot-word { font-size: 12.5vw; white-space: normal; }
+    .foot-cols > div { padding: 36px var(--pad); border-bottom: 1px solid var(--line); }
   }
+  @media (max-width: 600px) { .foot-cols { grid-template-columns: 1fr; } .foot-cols > div { border-right: 0; } }
 </style>
-
-<script>
-  import { gsap, reducedMotion } from '../../scripts/animations/motion';
-  // the footer rises from underneath, like a curtain
-  if (!reducedMotion())
-    gsap.from('.foot-inner', { yPercent: -30, ease: 'none', scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom bottom', scrub: true } });
-</script>

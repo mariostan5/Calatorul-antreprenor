@@ -1,184 +1,393 @@
 ---
-import { getImage } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/sections/Nav.astro';
 import Footer from '../components/sections/Footer.astro';
+import { config } from '../config';
+import { stats } from '../data/stats';
+import vegas from '../content/destinations/las-vegas.jpg';
+import phuket from '../content/destinations/phuket.jpg';
+import shanghai from '../content/destinations/shanghai.jpg';
+import grup from '../content/community/grup.jpg';
+import dubaiCina from '../content/community/dubai-cina.jpg';
 
-// the community photos that roll on the reel in the cabin
-const photos = await Promise.all(
-  (await getCollection('community'))
-    .sort((a, b) => a.data.order - b.data.order)
-    .map(async (p) => ({ src: (await getImage({ src: p.data.image, width: 640, format: 'webp' })).src, destination: p.data.destination, caption: p.data.caption })),
+const destinations = (await getCollection('destinations')).sort((a, b) => a.data.order - b.data.order);
+const posts = (await getCollection('community')).sort((a, b) => a.data.order - b.data.order);
+
+// the hero spiral: the club's own trip photos (public/spiral/pNN-s.webp on the card, pNN.webp when you open it)
+const spiral = Array.from({ length: 54 }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  return { kind: 'image' as const, thumb: `/spiral/p${n}-s.webp`, full: `/spiral/p${n}.webp`, caption: 'Din călătoriile comunității Călătorul Antreprenor' };
+});
+
+// 01: one card per club benefit (a looping video where we have one)
+const benefits = [
+  { tag: 'Puncte', title: 'Rezervare cu puncte', text: 'Punctele strânse lunar se transformă în nopți la hoteluri de 4–5★.', img: vegas },
+  { tag: 'Voucher', title: 'Voucher de bun venit', text: 'Alegi destinația primei vacanțe din lista clubului.', photo: '/spiral/p53.webp' },
+  { tag: 'Cashback', title: 'Cashback 3%', text: 'O parte din fiecare rezervare la hoteluri și croaziere se întoarce la tine.', img: phuket },
+  { tag: 'Excursii de grup', title: 'Excursii de grup', text: 'Pleci alături de comunitate, aproape în fiecare lună.', img: grup },
+  { tag: 'Comunitate', title: 'Chat-ul comunității', text: 'Români din toată lumea, într-un singur grup. Pleci singur, te întorci cu prieteni.', img: dubaiCina },
+  { tag: 'Academie', title: 'Academie', text: 'Workshop-uri live în fiecare săptămână: marketing, vânzări, comunicare și AI.', img: shanghai },
+];
+
+// 02: the numbers (members and destinations come from src/data/stats.ts)
+const counters = [
+  { value: 3, suffix: '%', label: 'cashback la hoteluri și croaziere' },
+  { value: stats[1].value, suffix: stats[1].suffix, label: stats[1].label },
+  { value: stats[0].value, suffix: stats[0].suffix, label: stats[0].label },
+];
+
+// 03: the community's stories (a post with `video` plays it, the others open the photo and the story)
+const stories = await Promise.all(
+  posts.slice(0, 6).map(async (p) => ({
+    ...p.data,
+    large: (await getImage({ src: p.data.image, width: 1280, format: 'webp' })).src,
+  })),
 );
 
-type Action = { t: string; href?: string; go?: number; gold?: boolean };
-// span = screen-heights of scroll the chapter takes (the flight in from the hero, the community's photos)
-type Chapter = { id: string; num: string; name: string; l1: string; l2: string; sub?: string; align?: 'right'; hero?: boolean; span?: number; actions: Action[] };
-// one chapter per stop of the flight (src/scripts/journey.ts: STOPS); each stop's thing in the picture opens its page
-const chapters: Chapter[] = [
-  // the hero: the title above the jet and the way in, centred at the bottom
-  { id: 'zbor', num: 'I', name: 'Decolarea', l1: 'Călătorește', l2: 'ca un antreprenor.', hero: true, span: 2, actions: [{ t: 'Urcă la bord', go: 1 }] },
-  {
-    id: 'comunitate', num: 'II', name: 'Comunitatea', l1: 'Comunitatea', l2: 'te așteaptă.', align: 'right', span: 3,
-    actions: [{ t: 'Intră în comunitate', href: '/comunitate', gold: true }],
-  },
-  {
-    id: 'club', num: 'III', name: 'Clubul', l1: 'Clubul', l2: 'la bord.',
-    sub: 'Hoteluri de 4–5★ la prețuri de membru, peste 2.000 de destinații și excursii de grup aproape în fiecare lună.',
-    actions: [{ t: 'Descoperă clubul', href: '/club' }],
-  },
-  {
-    id: 'academie', num: 'IV', name: 'Academia', l1: 'Academia', l2: 'din lounge.',
-    sub: 'Workshop-uri live în fiecare săptămână: marketing, vânzări, comunicare și AI.',
-    actions: [{ t: 'Vezi workshop-urile', href: '/business-class#academie' }],
-  },
-  {
-    id: 'destinatii', num: 'V', name: 'Destinații', l1: 'Următoarea', l2: 'destinație.',
-    sub: 'Plecări în grup, alături de comunitate. Apasă pe ecran și vezi unde zburăm.',
-    actions: [{ t: 'Toate destinațiile', href: '/destinatii' }],
-  },
+// 04: the way into the business side
+const steps = [
+  { n: '01', title: 'Învață', fact: '4 workshop-uri live / lună', text: 'Marketing, vânzări, comunicare, social media și AI, în sesiuni practice. Plus întrebări cu experți.' },
+  { n: '02', title: 'Construiește', fact: 'Plan pe 90 de zile', text: 'Un plan pas cu pas, făcut după obiectivul tău și după timpul pe care îl ai la dispoziție.' },
+  { n: '03', title: 'Crește', fact: '1 mentor dedicat', text: 'Sprijin constant de la oameni care au parcurs drumul, într-o comunitate care crește împreună.' },
 ];
+
+const marquee = ['World Tours', 'Getaways', 'Travel Plus', 'Legacy Travel', 'Croaziere', 'Hoteluri', 'Zboruri', 'Venit pasiv'];
+const sections = ['Acasă', 'Beneficii', 'Libertate', 'Comunitate', 'Oportunitate', 'Începe'];
+const fmt = (v: number) => v.toLocaleString('ro-RO');
 ---
 <Base>
-  <!-- decide before first paint whether the 3D flight can run (avoids a flash of the stacked fallback) -->
-  <script is:inline>
-    try { if (document.createElement('canvas').getContext('webgl2')) document.documentElement.classList.add('xp-on'); } catch (e) {}
-  </script>
-  <div class="xp" data-photos={JSON.stringify(photos)} aria-hidden="true">
-    <canvas class="xp-canvas"></canvas>
-    <div class="xp-shade"></div>
-  </div>
-  <!-- the logo comes out of the clouds, then lands in the nav -->
-  <div class="intro" aria-hidden="true">
-    <video class="intro-base" src="/hero/clouds.mp4" poster="/hero/clouds.webp" autoplay muted loop playsinline></video>
-    <div class="intro-veil"></div>
-    <div class="intro-mark">
-      <div class="intro-logo"></div>
-      <p class="intro-name">Călătorul Antreprenor</p>
-    </div>
-    <img class="intro-front l" src="/hero/puff.webp" alt="" />
-    <img class="intro-front r" src="/hero/puff.webp" alt="" />
-  </div>
-  <div class="xp-exit" aria-hidden="true"></div>
-  <div class="xp-veil" aria-hidden="true"></div>
-  <!-- the community photos (DepthCarousel), at the left of the cabin -->
-  <div class="xp-gallery"><div class="xp-gallery-carousel"></div></div>
-  <span class="xp-tip label" aria-hidden="true"></span>
-  <!-- the hint on the door you go through next -->
-  <p class="xp-door" aria-hidden="true"><i></i><span class="label">Mai departe</span><b></b><span class="label">Scroll ↓</span></p>
-
   <Nav />
-  <main class="chapters">
-    {chapters.map((c, i) => {
-      const H = i === 0 ? 'h1' : 'h2';
-      return (
-        <section class="ch" id={c.id} data-num={c.num} data-name={c.name} data-align={c.align} data-hero={c.hero ? '' : undefined} style={`--span: ${c.span ?? 1}`}>
-          <div class="ch-inner">
-            {!c.hero && <p class="ch-kicker label">(Cap. {c.num}) · {c.name}</p>}
-            <H class="ch-title"><span class="ch-line ch-l1">{c.l1}</span><span class="ch-line ch-l2">{c.l2}</span></H>
-            {c.sub && <p class="ch-sub">{c.sub}</p>}
-            <div class="ch-actions">
-              {c.actions.map((a) => a.go !== undefined
-                ? <button class="btn btn-line" type="button" data-go={a.go}>{a.t}</button>
-                : <a class:list={['btn', a.gold ? 'btn-gold' : 'btn-line']} href={a.href} data-magnetic>{a.t}</a>)}
-            </div>
-          </div>
-        </section>
-      );
-    })}
+  <main class="home">
+    <!-- 1. hero: the name inside a spiral of photos and clips that flies towards you -->
+    <section class="hero" data-nofocus data-si>
+      <canvas class="spiral" data-items={JSON.stringify(spiral)} role="img" aria-label="Fotografii și clipuri din călătoriile clubului, în spirală. Apasă pe una ca să o mărești."></canvas>
+      <div class="hero-copy">
+        <p class="hero-logo" aria-hidden="true"><img src="/brand-logo.webp" alt="" width="240" height="240" /><span class="hl-words"><span class="hl-line">Călătorul</span><span class="hl-line">Antreprenor</span></span></p>
+        <h1 class="hero-title">Călătorii de lux <em>la prețuri de membru.</em></h1>
+        <p class="hero-sub">Hoteluri de 4–5★, croaziere și excursii de grup, rezervate cu prețurile clubului.<br />O comunitate de români din toată lumea care călătoresc mai mult.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/club">Descoperă clubul</a>
+          <a class="btn btn-secondary" href="/business-class">Vezi oportunitatea</a>
+        </div>
+        <p class="hero-trust label"><span>Travorium</span><span>2.000.000+ hoteluri</span><span>Fără costuri ascunse</span></p>
+      </div>
+    </section>
+
+    <!-- 2. marquee -->
+    <section class="marquee" aria-label="Ce găsești în club">
+      <div class="mq-track">
+        {[0, 1].map((copy) => (
+          <ul class="mq-list" aria-hidden={copy ? 'true' : undefined}>
+            {marquee.map((m) => <li>{m}</li>)}
+          </ul>
+        ))}
+      </div>
+    </section>
+
+    <!-- 3. 01 / benefits -->
+    <section class="sec" id="beneficii" data-si>
+      <p class="sec-label label">01 / Beneficii club</p>
+      <div class="sec-body">
+        <h2 class="h2 sec-title" data-split>Tot ce primești <em>ca membru.</em></h2>
+        <div class="b-grid">
+          {benefits.map((b, i) => (
+            <article class="b-card">
+              <p class="b-row label"><span>{b.tag}</span><span>{String(i + 1).padStart(2, '0')}</span></p>
+              <div class="b-media">
+                {b.photo
+                  ? <img src={b.photo} alt="" loading="lazy" decoding="async" />
+                  : <Picture src={b.img!} formats={['avif', 'webp']} widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 40vw" alt="" loading="lazy" />}
+              </div>
+              <h3>{b.title}</h3>
+              <p>{b.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 02 / freedom: the manifesto -->
+    <section class="sec" id="libertate" data-si>
+      <p class="sec-label label">02 / Libertate</p>
+      <div class="sec-body">
+        <h2 class="manifesto" data-split>Nu mai <em>plăti</em> prețuri de turist.</h2>
+        <p class="manifesto-text">Ca membru primești puncte de călătorie în fiecare lună, prețuri de membru la hoteluri de 4–5★ și cashback la hoteluri și croaziere. Pleci mai des, cu prețurile clubului.</p>
+        <dl class="counters">
+          {counters.map((c) => (
+            <div><dt class="label">{c.label}</dt><dd class="num" data-count={c.value} data-suffix={c.suffix}>{fmt(c.value) + c.suffix}</dd></div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- 5. 03 / community: their stories -->
+    <section class="sec" id="comunitate" data-si>
+      <p class="sec-label label">03 / Comunitate</p>
+      <div class="sec-body">
+        <div class="sec-head">
+          <h2 class="h2 sec-title" data-split>Oamenii cu care <em>călătorești.</em></h2>
+          <a class="btn btn-secondary" href="/comunitate">Toată comunitatea</a>
+        </div>
+        <ul class="c-grid">
+          {stories.map((s) => (
+            <li>
+              <button class="c-card" type="button" data-video={s.video} data-src={s.large} data-caption={`${s.author} · ${s.destination}: ${s.text}`}>
+                <span class="c-media">
+                  <Picture src={s.image} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 900px) 100vw, 30vw" alt={`${s.author}, ${s.destination}`} loading="lazy" />
+                  <span class="c-play label">▶ {s.video ? 'Play' : 'Povestea'}</span>
+                </span>
+                <span class="c-name">{s.author}</span>
+                <span class="c-dest label">{s.destination} · {s.home}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. 04 / opportunity: three steps -->
+    <section class="sec" id="oportunitate" data-si>
+      <p class="sec-label label">04 / Oportunitate</p>
+      <div class="sec-body">
+        <div class="sec-head">
+          <h2 class="h2 sec-title" data-split>Construiește ceva <em>al tău.</em></h2>
+          <a class="btn btn-secondary" href="/business-class">Vezi oportunitatea</a>
+        </div>
+        <p class="sec-lead">Aceeași comunitate, un alt ritm: înveți, construiești și crești, alături de oameni care au făcut deja drumul.</p>
+        <ol class="steps">
+          {steps.map((s) => (
+            <li>
+              <b class="num">{s.n}</b>
+              <h3>{s.title}</h3>
+              <span class="step-fact label">{s.fact}</span>
+              <p>{s.text}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="income-note">Rezultatele diferă de la om la om și depind de timpul și efortul investit. <a href="/nota-venituri">Nota despre venituri</a></p>
+      </div>
+    </section>
+
+    <!-- 7. final call -->
+    <section class="final-cta" data-si>
+      <p class="label kicker">Începe gratuit · Fără obligații</p>
+      <h2 class="h2" data-split>Prima ta călătorie <em>e la un click.</em></h2>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href={config.webinarUrl}>Rezervă webinarul gratuit</a>
+        <a class="btn btn-secondary" href={config.whatsapp} target="_blank" rel="noopener">Scrie-ne pe WhatsApp</a>
+      </div>
+    </section>
   </main>
+
+  <!-- where you are: the section names, a ruler and how far down the page you are (desktop) -->
+  <aside class="si" aria-hidden="true">
+    <ol>{sections.map((n) => <li>{n}</li>)}</ol>
+    <div class="si-ruler"><i></i></div>
+    <b class="si-pct num">0%</b>
+  </aside>
+
+  <dialog class="lb" aria-label="Povestea din comunitate">
+    <button class="lb-x label" type="button">Închide ✕</button>
+    <div class="lb-media"></div>
+    <p class="lb-cap"></p>
+  </dialog>
+
   <Footer />
 </Base>
 
 <style is:global>
-  /* ---------- the flight, fixed behind everything (no WebGL: the first frame as a backdrop) ---------- */
-  .xp { position: fixed; inset: 0; z-index: 0; background: var(--ink) url(/hero/jet.webp) center / cover; }
-  .xp-canvas { width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
-  .xp.ready .xp-canvas { opacity: 1; }
-  /* keeps the titles readable over the bright white cabin: darker on the side the words sit */
-  .xp-shade { position: absolute; inset: 0; pointer-events: none; transition: opacity .8s; background:
-    linear-gradient(90deg, rgba(4, 11, 31, .78), rgba(4, 11, 31, .38) 40%, rgba(4, 11, 31, 0) 64%),
-    linear-gradient(180deg, rgba(4, 11, 31, .5), rgba(4, 11, 31, 0) 20%, rgba(4, 11, 31, 0) 75%, rgba(4, 11, 31, .55)); }
-  .xp[data-chapter="0"] .xp-shade, .xp[data-chapter="-1"] .xp-shade { background:
-    linear-gradient(180deg, rgba(4, 11, 31, .55), rgba(4, 11, 31, .2) 30%, rgba(4, 11, 31, 0) 50%, rgba(4, 11, 31, 0) 80%, rgba(4, 11, 31, .45)); }
-  .xp[data-align="right"] .xp-shade { background:
-    linear-gradient(270deg, rgba(4, 11, 31, .78), rgba(4, 11, 31, .38) 40%, rgba(4, 11, 31, 0) 64%),
-    linear-gradient(180deg, rgba(4, 11, 31, .5), rgba(4, 11, 31, 0) 20%, rgba(4, 11, 31, 0) 75%, rgba(4, 11, 31, .55)); }
+  /* ---------- 1. hero: the spiral fills it, the words sit in the middle ---------- */
+  .hero { position: relative; min-height: 100svh; padding-top: 64px; display: grid; place-items: center; overflow: hidden; }
+  .spiral { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s var(--ease-out); }
+  .spiral.on { opacity: 1; }
+  /* the words let the pointer through to the spiral, except where you can click */
+  .hero-copy { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 6vh var(--pad); text-align: center; pointer-events: none; }
+  .hero-copy a, .hero-copy button { pointer-events: auto; }
+  .hero-copy::before { transition: opacity .5s var(--ease-out); }
+  /* a grown card shows clearly under the words */
+  .spiral.hovering + .hero-copy::before { opacity: 0; }
+  /* a soft pool of the background behind the words, so the cards passing behind never hide them */
+  .hero-copy::before { content: ""; position: absolute; inset: 14% 4% 6%; z-index: -1; background: radial-gradient(closest-side, color-mix(in srgb, var(--bg) 90%, transparent) 40%, color-mix(in srgb, var(--bg) 60%, transparent) 72%, transparent); pointer-events: none; }
+  /* the round logo, then the name on two centred lines */
+  .hero-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(10px, 1.4vw, 20px); font-family: var(--display); font-weight: 700; font-size: clamp(38px, 6.6vw, 118px); line-height: .88; letter-spacing: 0; text-transform: uppercase; text-shadow: 0 2px 30px color-mix(in srgb, var(--bg) 80%, transparent); }
+  .hero-logo img { flex: none; width: 1.05em; height: 1.05em; border-radius: 50%; box-shadow: 0 10px 30px rgba(0, 0, 0, .12); }
+  .hl-words { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  /* the intro shows the page piece by piece: hidden until it starts */
+  .js .hero-copy { visibility: hidden; }
+  .hero-title { max-width: 34ch; font-size: clamp(28px, 3.2vw, 52px); line-height: 1.05; text-wrap: balance; }
+  .hero-sub { max-width: 60ch; color: var(--muted); font-size: clamp(15px, 1.15vw, 18px); }
+  .hero-sub, .hero-title, .hero-trust { text-shadow: 0 1px 18px var(--bg), 0 0 2px var(--bg); }
+  .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; color: var(--muted); }
+  .hero-trust span + span::before { content: "·"; margin: 0 14px; color: var(--accent-ink); }
 
-  /* ---------- intro: the logo condenses out of drifting clouds ---------- */
-  .intro { position: fixed; inset: 0; z-index: 90; display: none; place-items: center; overflow: hidden; }
-  .js .intro { display: grid; }
-  .intro-base { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; scale: 1.15; }
-  .intro-veil { position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 48%, rgba(250, 252, 255, .88), rgba(236, 244, 252, .5) 70%, rgba(220, 234, 248, .25)); }
-  .intro-mark { position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-  .intro-logo { width: clamp(150px, 13vw, 210px); aspect-ratio: 345 / 280; background: var(--royal);
-    -webkit-mask: url(/logo-mark.png) center / contain no-repeat; mask: url(/logo-mark.png) center / contain no-repeat; }
-  .intro-name { font-family: var(--mono); font-size: 13px; letter-spacing: .32em; text-transform: uppercase; color: var(--royal); }
-  .intro-front { position: absolute; top: 50%; width: 95vw; max-width: none; translate: 0 -50%; opacity: .95;
-    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); }
-  .intro-front.l { left: -38vw; }
-  .intro-front.r { right: -38vw; scale: -1 1; }
-  /* the nav waits for the logo to land */
-  .js .nav-brand img, .js .nav-brand span, .js .nav-links a, .js .nav-cta { opacity: 0; }
+  /* ---------- 2. marquee ---------- */
+  .marquee { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .mq-track { display: flex; width: max-content; animation: mq 42s linear infinite; }
+  .mq-list { display: flex; }
+  .mq-list li { display: flex; align-items: center; padding: 20px 0; font-family: var(--mono); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+  .mq-list li::after { content: ""; width: 6px; height: 6px; margin: 0 32px; background: var(--accent); }
+  @keyframes mq { to { transform: translateX(-50%); } }
 
-  .xp-exit { position: fixed; inset: 0; z-index: 80; background: var(--cream); opacity: 0; visibility: hidden; pointer-events: none; }
-  .xp-tip { position: fixed; left: 0; top: 0; z-index: 60; padding: 8px 14px; border-radius: 999px; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none; transition: opacity .3s; }
-  .xp-tip.on { opacity: 1; }
+  /* ---------- the numbered sections: a sticky label on the left, the content on the right ---------- */
+  .sec { display: grid; grid-template-columns: minmax(180px, 16vw) 1fr; border-bottom: 1px solid var(--line); }
+  .sec-label { position: sticky; top: 64px; align-self: start; padding: 30px var(--pad); color: var(--muted); }
+  .sec-body { min-width: 0; padding: 12vh var(--pad) 14vh; border-left: 1px solid var(--line); }
+  .sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .sec-title { max-width: 14ch; }
+  .sec-lead { max-width: 54ch; margin-top: 26px; color: var(--muted); font-size: clamp(16px, 1.2vw, 19px); }
+  @media (min-width: 1100px) { .home .sec-body { padding-right: calc(var(--pad) + 170px); } }
 
-  /* ---------- chapters: in the flow they give the scroll its length; on top they are titles at the side ---------- */
-  .chapters { position: relative; z-index: 1; }
-  .ch { min-height: calc(var(--span, 1) * 100vh); display: grid; place-items: center; padding: 120px var(--pad); }
-  .xp-on .chapters { pointer-events: none; }
-  /* the film is one screen: the chapters' titles sit on top of it, the page only scrolls on to the footer */
-  .xp-on .chapters { height: 100vh; }
-  .xp-on .ch { min-height: 0; height: 0; padding: 0; }
-  .xp-lock, .xp-lock body { overflow: hidden; }
-  .xp-veil { position: fixed; inset: 0; z-index: 4; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; }
-  /* the community's photo carousel: left of the cabin, clear of the door in the middle */
-  .xp-gallery { display: none; }
-  .xp-on .xp-gallery { position: fixed; left: 3vw; top: 50%; z-index: 3; display: block; width: min(40vw, 600px); height: min(68vh, 560px); translate: 0 -50%; opacity: 0; visibility: hidden; transition: opacity .8s var(--ease-out), visibility .8s; }
-  .xp-gallery.on { opacity: 1; visibility: visible; }
-  .xp-on .ch-inner { position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 var(--pad) 0 7vw; text-align: left; }
-  .ch-inner { max-width: 100%; }
-  .ch-inner a, .ch-inner button { pointer-events: auto; }
-  .ch-kicker { color: var(--gold); margin-bottom: 24px; }
-  .xp-on [data-align="right"] .ch-inner { align-items: flex-end; text-align: right; padding: 0 7vw 0 var(--pad); }
-  [data-align="right"] .ch-title { align-items: flex-end; }
-  [data-align="right"] .ch-actions { justify-content: flex-end; }
-  /* hero: title centred in the sky above the jet, the button centred at the bottom */
-  .xp-on [data-hero] .ch-inner { align-items: center; justify-content: flex-start; text-align: center; padding: 12vh var(--pad) 0; }
-  [data-hero] .ch-title { align-items: center; }
-  [data-hero] .ch-l1 { font-size: clamp(34px, 4vw, 72px); }
-  [data-hero] .ch-l2 { font-size: clamp(44px, 5.3vw, 100px); }
-  .xp-on [data-hero] .ch-actions { position: absolute; left: 0; right: 0; bottom: 44px; justify-content: center; margin: 0; }
-  .ch-title .ln-mask { padding-bottom: .2em; margin-bottom: -.2em; }
-  .ch-title { display: flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .92; text-shadow: 0 2px 30px rgba(4, 11, 31, .35); }
-  .ch-l1 { font-family: var(--sans); font-weight: 300; font-size: clamp(38px, 4.6vw, 84px); letter-spacing: .01em; text-transform: uppercase; }
-  .ch-l2 { font-family: var(--serif); font-weight: 500; font-size: clamp(50px, 6.2vw, 118px); letter-spacing: -.015em; }
-  .ch-sub { max-width: 40ch; margin-top: 24px; font-size: clamp(16px, 1.2vw, 19px); color: rgba(243, 238, 228, .9); text-wrap: balance; text-shadow: 0 2px 20px rgba(4, 11, 31, .8); }
-  .ch-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
-  .btn-line { border-color: rgba(216, 192, 138, .7); color: var(--cream); background: rgba(4, 11, 31, .25); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-  .btn-line:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  /* 01: benefit cards */
+  .b-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8vh; }
+  .b-card { padding: 18px 18px 26px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); transition: border-color .4s; }
+  .b-card:hover { border-color: var(--line-strong); }
+  .b-row { display: flex; justify-content: space-between; margin-bottom: 16px; color: var(--muted); }
+  .b-media { aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius); background: var(--card-2); }
+  .b-media img, .b-media video { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease-out); }
+  .b-card:hover .b-media img, .b-card:hover .b-media video { transform: scale(1.03); }
+  .b-card h3 { margin: 22px 0 8px; font-weight: 700; font-stretch: 112%; font-size: clamp(22px, 1.8vw, 30px); }
+  .b-card p:last-child { max-width: 44ch; color: var(--muted); }
 
-  /* ---------- the hint on the next door: a breathing ring, the next chapter's name ---------- */
-  .xp-door { position: fixed; left: 0; top: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; margin: -26px 0 0 -90px; width: 180px; text-align: center; color: var(--cream); text-shadow: 0 1px 14px rgba(4, 11, 31, .7); opacity: 0; pointer-events: none; transition: opacity .6s; }
-  .xp-door.on { opacity: 1; }
-  .xp-door i { width: 52px; height: 52px; margin-bottom: 8px; border-radius: 50%; border: 1px solid rgba(243, 238, 228, .9); background: rgba(4, 11, 31, .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: door-ring 2.2s var(--ease-out) infinite; }
-  .xp-door b { font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1; }
-  .xp-door .label { color: rgba(243, 238, 228, .85); }
-  @keyframes door-ring { 0% { box-shadow: 0 0 0 0 rgba(243, 238, 228, .55); } 100% { box-shadow: 0 0 0 22px rgba(243, 238, 228, 0); } }
+  /* 02: the manifesto */
+  .manifesto { max-width: 12ch; font-size: clamp(52px, 8.4vw, 150px); line-height: .9; letter-spacing: -.01em; }
+  .manifesto-text { max-width: 52ch; margin-top: 34px; color: var(--muted); font-size: clamp(16px, 1.25vw, 20px); }
+  .counters { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 9vh; border-top: 1px solid var(--line); }
+  .counters > div { display: flex; flex-direction: column-reverse; gap: 10px; padding: 28px 24px 0 0; }
+  .counters > div + div { padding-left: 24px; border-left: 1px solid var(--line); }
+  .counters dd { font-family: var(--mono); font-size: clamp(44px, 5vw, 84px); line-height: 1; letter-spacing: -.01em; }
+  .counters dt { color: var(--muted); }
 
-  /* the home page keeps its bottom edge clear */
-  .wa { display: none !important; }
+  /* 03: community stories */
+  .c-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8vh; }
+  .c-card { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
+  .c-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color .4s; }
+  .c-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease-out); }
+  .c-card:hover .c-media { border-color: var(--line-strong); }
+  .c-card:hover .c-media img { transform: scale(1.03); }
+  .c-play { position: absolute; left: 12px; bottom: 12px; padding: 7px 10px; border-radius: var(--radius); background: var(--btn-bg); color: var(--btn-fg); }
+  .c-name { font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: 19px; }
+  .c-dest { color: var(--muted); }
 
-  /* no WebGL: the chapters simply stack over the first frame */
-  .no-xp .xp-canvas { display: none; }
+  /* 04: steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8vh; }
+  .steps li { padding: 26px 24px 30px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); transition: border-color .4s; }
+  .steps li:hover { border-color: var(--line-strong); }
+  .steps b { font-weight: 400; font-size: 13px; letter-spacing: .12em; color: var(--accent-ink); }
+  .steps h3 { margin: 40px 0 14px; font-size: clamp(32px, 3vw, 52px); }
+  .step-fact { display: inline-block; margin-bottom: 16px; padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: var(--radius); }
+  .steps p { color: var(--muted); }
+  .income-note { margin-top: 28px; font-size: 13px; color: var(--muted); }
+  .income-note a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* the final call */
+  .final-cta { display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 18vh var(--pad) 20vh; text-align: center; }
+  .final-cta .h2 { max-width: 15ch; font-size: clamp(44px, 6.6vw, 118px); }
+
+  /* ---------- the section indicator and the scroll ruler (desktop) ---------- */
+  .si { display: none; }
+  @media (min-width: 1100px) {
+    .si { position: fixed; right: 26px; top: 50%; z-index: 40; display: flex; align-items: center; gap: 18px; translate: 0 -50%; pointer-events: none; }
+    .si ol { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .si li { font-family: var(--display); font-weight: 800; font-stretch: 125%; font-size: 10px; letter-spacing: .02em; line-height: 1; text-transform: uppercase; color: var(--muted); opacity: .45; transition: font-size .6s var(--ease-out), opacity .6s, color .6s; }
+    .si li.on { font-size: 21px; opacity: 1; color: var(--fg); }
+    .si-ruler { position: relative; width: 9px; height: 34vh; border-right: 1px solid var(--line-strong); background: repeating-linear-gradient(to bottom, var(--line-strong) 0 1px, transparent 1px 16px) right / 6px 100% no-repeat; }
+    .si-ruler i { position: absolute; right: -1px; top: 0; width: 1px; height: 100%; background: var(--accent-ink); transform: scaleY(var(--p, 0)); transform-origin: top; }
+    .si-pct { position: absolute; right: 0; top: calc(100% + 12px); font-size: 11px; color: var(--muted); }
+  }
+
+  /* ---------- the story lightbox ---------- */
+  .lb { margin: auto; width: min(92vw, 980px); max-height: 92vh; padding: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--card); color: var(--fg); }
+  .lb::backdrop { background: rgba(0, 0, 0, .82); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .lb-x { position: absolute; right: 12px; top: 12px; z-index: 2; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--card); cursor: pointer; }
+  .lb-media img, .lb-media video { width: 100%; max-height: 72vh; object-fit: contain; background: #000; }
+  .lb-cap { padding: 18px 22px 22px; color: var(--muted); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .sec { grid-template-columns: 1fr; }
+    .sec-label { position: static; padding-bottom: 0; }
+    .sec-body { border-left: 0; padding-top: 5vh; }
+    .b-grid, .c-grid, .steps, .counters { grid-template-columns: 1fr; }
+    .counters > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+    .counters > div { padding-bottom: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } }
 </style>
 
 <script>
-  import { startIntro } from '../scripts/hero';
-  const introDone = startIntro();
-  // three.js loads after the page is on screen, so the initial JS stays small
-  if (document.documentElement.classList.contains('xp-on')) import('../scripts/journey').then((m) => m.startJourney(introDone));
+  import { $, $$, gsap, ScrollTrigger, SplitText, reducedMotion } from '../scripts/animations/motion';
+  import type { SpiralItem } from '../scripts/spiral';
+
+  const rm = reducedMotion();
+
+  /* ---------- the lightbox: a card grows from where it was into the middle; a video plays ---------- */
+  const lb = $<HTMLDialogElement>('.lb')!, media = $('.lb-media', lb)!, cap = $('.lb-cap', lb)!;
+  let spiral: { pause: (p: boolean) => void } | null = null;
+  const open = (m: { video?: string; src?: string; poster?: string; caption?: string }, from?: DOMRect) => {
+    media.replaceChildren(m.video
+      ? Object.assign(document.createElement('video'), { src: m.video, poster: m.poster ?? '', controls: true, autoplay: true, muted: true, loop: true, playsInline: true })
+      : Object.assign(document.createElement('img'), { src: m.src, alt: m.caption ?? '' }));
+    cap.textContent = m.caption ?? '';
+    lb.showModal();
+    spiral?.pause(true);
+    if (from && !rm) {
+      // FLIP: start the dialog over the card's rectangle on screen, then let it grow to its place
+      const to = lb.getBoundingClientRect();
+      gsap.fromTo(lb, { x: from.left - to.left, y: from.top - to.top, scaleX: from.width / to.width, scaleY: from.height / to.height, transformOrigin: '0 0', opacity: 0.6 },
+        { x: 0, y: 0, scaleX: 1, scaleY: 1, opacity: 1, duration: 0.7, ease: 'expo.out', clearProps: 'transform,opacity' });
+    }
+  };
+  const close = () => lb.close();
+  $('.lb-x', lb)!.addEventListener('click', close);
+  lb.addEventListener('click', (e) => e.target === lb && close());
+  lb.addEventListener('close', () => { media.replaceChildren(); spiral?.pause(false); });
+
+  /* ---------- the intro (after getartcraft.com): the logo alone in the middle, it slides to its place
+     while the name writes itself out, the words come into focus, then the buttons, then the spiral ---------- */
+  const copy = $('.hero-copy')!, logo = $('.hero-logo img')!;
+  const chars = SplitText.create($$('.hl-line'), { type: 'chars' }).chars;
+  const words = [$('.hero-title')!, $('.hero-sub')!], rest = [$('.hero-actions')!, $('.hero-trust')!];
+  const showSpiral = () => $('.spiral')!.classList.add('on');
+  gsap.set(copy, { visibility: 'visible' });
+  if (rm) showSpiral();
+  else {
+    const r = logo.getBoundingClientRect();
+    gsap.timeline({ delay: 0.25 })
+      .set([...chars, ...words, ...rest], { opacity: 0 })
+      .fromTo(logo, { x: innerWidth / 2 - (r.left + r.width / 2), y: innerHeight / 2 - (r.top + r.height / 2), scale: 0.6, opacity: 0 },
+        { scale: 1.25, opacity: 1, duration: 0.7, ease: 'expo.out' })
+      .to(logo, { x: 0, y: 0, scale: 1, duration: 0.9, ease: 'power3.inOut' }, '+=0.25')
+      .fromTo(chars, { opacity: 0, x: -18, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out', stagger: 0.035 }, '-=0.45')
+      .fromTo(words, { opacity: 0, y: 10, filter: 'blur(14px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power2.out', stagger: 0.12 }, '-=0.25')
+      .fromTo(rest, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out', stagger: 0.1 }, '-=0.5')
+      .add(showSpiral, '-=0.6');
+  }
+
+  /* ---------- hero: the spiral (three.js loads after the page shows) ---------- */
+  const canvas = $<HTMLCanvasElement>('.spiral')!;
+  const items: SpiralItem[] = JSON.parse(canvas.dataset.items || '[]');
+  const go = () => import('../scripts/spiral').then((m) => {
+    spiral = m.startSpiral(canvas, items, (it, from) =>
+      open(it.kind === 'video' ? { video: it.full, poster: it.poster, caption: it.caption } : { src: it.full, caption: it.caption }, from));
+  });
+  if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
+
+  /* ---------- the section indicator and the ruler ---------- */
+  const siItems = $$('.si li'), fill = $('.si-ruler i')!, pct = $('.si-pct')!;
+  $$('[data-si]').forEach((s, i) =>
+    ScrollTrigger.create({ trigger: s, start: 'top 55%', end: 'bottom 55%', onToggle: (self) => self.isActive && siItems.forEach((li, k) => li.classList.toggle('on', k === i)) }));
+  siItems[0]?.classList.add('on');
+  ScrollTrigger.create({
+    start: 0, end: 'max',
+    onUpdate: (self) => { fill.style.setProperty('--p', self.progress.toFixed(4)); pct.textContent = `${Math.round(self.progress * 100)}%`; },
+  });
+
+  /* ---------- community stories open in the same lightbox ---------- */
+  $$<HTMLButtonElement>('.c-card').forEach((b) => b.addEventListener('click', () => {
+    const { video, src, caption } = b.dataset;
+    open({ video, src, caption }, $('.c-media', b)!.getBoundingClientRect());
+  }));
 </script>

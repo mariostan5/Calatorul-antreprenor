@@ -18,9 +18,16 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#040B1F" />
-    <link rel="icon" href="/logo-mark.png" />
-    <script is:inline>document.documentElement.classList.add('js')</script>
+    <meta name="theme-color" content="#FAFAF9" />
+    <link rel="icon" href="/brand-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400..700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- the theme is decided before first paint: the visitor's last choice, light by default -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try { if (localStorage.getItem('ca-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
+    </script>
     <slot name="head" />
   </head>
   <body>

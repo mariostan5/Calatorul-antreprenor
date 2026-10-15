@@ -99,6 +99,16 @@ export function initReveals() {
     el.textContent = fmt(0, +(el.dataset.decimals || 0)) + (el.dataset.suffix || '');
     ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => countUp(el) });
   });
+
+  // every section comes into focus as it scrolls in: blur 8px → 0, opacity .4 → 1. Not on pinned
+  // sections (a filter would unpin their stage) nor on what is on screen at load (data-nofocus)
+  if (!rm)
+    $$('main > section:not([data-pinned]):not([data-nofocus]), main > header:not([data-nofocus])').forEach((el) => {
+      gsap.fromTo(el, { filter: 'blur(8px)', opacity: 0.4 }, {
+        filter: 'blur(0px)', opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 55%', scrub: true },
+      });
+    });
 }
 
 /** Buttons that lean toward the pointer (desktop only). */

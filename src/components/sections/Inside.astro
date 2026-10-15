@@ -5,12 +5,12 @@ import trip from '../../content/destinations/bali.jpg';
 
 const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120], sizes: '60px', alt: '', loading: 'lazy' as const };
 ---
-<section class="inside" id="club">
+<section class="inside" id="club" data-pinned>
   <div class="inside-stage">
     <div class="inside-head">
       <div>
         <span class="label kicker">Clubul, văzut din interior</span>
-        <h2 class="h2 h2-md" data-split>Tot ce primești ca membru, pe ecranul din fața ta.</h2>
+        <h2 class="h2 h2-md" data-split>Tot ce primești <em>ca membru,</em> pe ecranul din fața ta.</h2>
       </div>
       <p class="label inside-note">Exemple ilustrative<span> · dă scroll</span></p>
     </div>
@@ -29,7 +29,7 @@ const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120],
       <article class="ui-card" data-ui="voucher">
         <div class="ui-screen ui-center">
           <div class="voucher">
-            <div class="v-top"><span class="label">Voucher de bun venit</span><img src="/logo-mark.png" alt="" width="345" height="280" /></div>
+            <div class="v-top"><span class="label">Voucher de bun venit</span><img src="/brand-logo.webp" alt="" width="240" height="240" /></div>
             <b class="v-city">Prima vacanță</b>
             <div class="v-meta"><div><span class="label">Durată</span><b>6 zile</b></div><div><span class="label">Plătești</span><b>taxele</b></div><div><span class="label">Valabil</span><b>18 luni</b></div></div>
             <div class="v-film" aria-hidden="true"></div>
@@ -59,7 +59,7 @@ const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120],
 
       <article class="ui-card" data-ui="chat">
         <div class="ui-screen chat">
-          <div class="chat-head"><span class="chat-av"><img src="/logo-mark.png" alt="" width="345" height="280" /></span><div><b>Comunitatea Călătorul Antreprenor</b><span>700+ membri</span></div></div>
+          <div class="chat-head"><span class="chat-av"><img src="/brand-logo.webp" alt="" width="240" height="240" /></span><div><b>Comunitatea Călătorul Antreprenor</b><span>700+ membri</span></div></div>
           <div class="msg">Cine mai vine la Dubai în decembrie?</div>
           <div class="msg me">Noi doi! Am rezervat aseară, cu punctele.</div>
           <div class="msg">Și eu. Ne vedem la cina de grup din Marina.</div>
@@ -86,52 +86,52 @@ const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120],
   .inside-stage { position: relative; isolation: isolate; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 5vh; overflow: hidden; padding: 9vh 0 5vh; }
   .inside-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding: 0 var(--pad); }
   .inside-head .h2 { max-width: 18ch; }
-  .inside-note { color: rgba(243, 238, 228, .65); white-space: nowrap; }
+  .inside-note { color: color-mix(in srgb, var(--cream) 65%, transparent); white-space: nowrap; }
   .inside-track { display: flex; gap: 28px; width: max-content; padding: 0 var(--pad); will-change: transform; }
   .ui-card { flex: none; width: clamp(300px, 30vw, 450px); display: flex; flex-direction: column; gap: 18px; }
   /* Club = light: frosted cream glass */
   .ui-screen {
-    position: relative; height: clamp(300px, 44vh, 410px); display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 20px; overflow: hidden;
-    background: linear-gradient(160deg, rgba(243, 238, 228, .2), rgba(243, 238, 228, .06) 55%, rgba(4, 11, 31, .35));
-    border: 1px solid rgba(243, 238, 228, .22);
+    position: relative; height: clamp(300px, 44vh, 410px); display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: var(--radius); overflow: hidden;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--cream) 20%, transparent), color-mix(in srgb, var(--cream) 6%, transparent) 55%, color-mix(in srgb, var(--ink) 35%, transparent));
+    border: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 40px 80px rgba(0, 0, 0, .35);
     -webkit-backdrop-filter: blur(18px) saturate(130%); backdrop-filter: blur(18px) saturate(130%);
   }
   .ui-center { align-items: center; justify-content: center; }
-  .ui-cap h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(28px, 2.2vw, 38px); line-height: 1.05; }
-  .ui-cap p { max-width: 40ch; margin-top: 8px; color: rgba(243, 238, 228, .72); font-size: 15px; }
+  .ui-cap h3 { font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: clamp(28px, 2.2vw, 38px); line-height: 1.05; }
+  .ui-cap p { max-width: 40ch; margin-top: 8px; color: color-mix(in srgb, var(--cream) 72%, transparent); font-size: 15px; }
   .ui-title { color: var(--gold); }
-  .ui-panel { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(4, 11, 31, .45); border: 1px solid rgba(243, 238, 228, .1); }
-  .ui-panel img { width: 54px; height: 54px; flex: none; border-radius: 10px; object-fit: cover; }
+  .ui-panel { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: var(--radius); background: color-mix(in srgb, var(--ink) 45%, transparent); border: 1px solid color-mix(in srgb, var(--cream) 10%, transparent); }
+  .ui-panel img { width: 54px; height: 54px; flex: none; border-radius: var(--radius); object-fit: cover; }
   .ui-panel b { display: block; font-size: 15px; font-weight: 600; }
-  .ui-panel span { display: block; font-size: 12.5px; color: rgba(243, 238, 228, .65); }
+  .ui-panel span { display: block; font-size: 12.5px; color: color-mix(in srgb, var(--cream) 65%, transparent); }
 
   /* 1. points */
   .ui-balance { margin-top: auto; }
-  .ui-balance .label { display: block; color: rgba(243, 238, 228, .65); }
+  .ui-balance .label { display: block; color: color-mix(in srgb, var(--cream) 65%, transparent); }
   .ui-balance b { font-weight: 400; font-size: 54px; line-height: 1.1; }
-  .ui-bar { height: 4px; border-radius: 4px; background: rgba(243, 238, 228, .15); overflow: hidden; }
+  .ui-bar { height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--cream) 15%, transparent); overflow: hidden; }
   .ui-bar i { display: block; height: 100%; background: var(--gold); transform-origin: left; }
-  .ui-split { display: flex; justify-content: space-between; font-size: 12px; color: rgba(243, 238, 228, .6); }
-  .ui-btn { position: relative; height: 46px; flex: none; border-radius: 999px; background: var(--cream); color: var(--ink); font-weight: 600; font-size: 14px; overflow: hidden; }
+  .ui-split { display: flex; justify-content: space-between; font-size: 12px; color: color-mix(in srgb, var(--cream) 60%, transparent); }
+  .ui-btn { position: relative; height: 46px; flex: none; border-radius: var(--radius); background: var(--cream); color: var(--ink); font-weight: 600; font-size: 14px; overflow: hidden; }
   .ui-btn span { position: absolute; inset: 0; display: grid; place-items: center; transition: transform .8s var(--ease-out); }
   .ui-btn span + span { transform: translateY(100%); background: var(--gold); }
   .ui-btn.done span:first-child { transform: translateY(-100%); }
   .ui-btn.done span + span { transform: none; }
 
   /* 2. voucher: the protective film peels off */
-  .voucher { position: relative; width: min(100%, 320px); padding: 20px 22px; border-radius: 14px; background: var(--cream); color: var(--ink); box-shadow: 0 30px 60px rgba(0, 0, 0, .4); transform: rotate(-3deg); overflow: hidden; }
+  .voucher { position: relative; width: min(100%, 320px); padding: 20px 22px; border-radius: var(--radius); background: var(--cream); color: var(--ink); box-shadow: 0 30px 60px rgba(0, 0, 0, .4); transform: rotate(-3deg); overflow: hidden; }
   .v-top { display: flex; justify-content: space-between; align-items: center; }
-  .v-top .label { font-size: 9.5px; color: rgba(4, 11, 31, .6); }
-  .v-top img { width: auto; height: 24px; filter: brightness(0); opacity: .75; }
-  .v-city { display: block; margin: 12px 0 16px; font-family: var(--serif); font-weight: 600; font-size: 42px; line-height: 1; }
-  .v-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 14px; border-top: 2px dashed rgba(4, 11, 31, .18); }
-  .v-meta .label { display: block; font-size: 9px; color: rgba(4, 11, 31, .55); }
+  .v-top .label { font-size: 9.5px; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  .v-top img { width: auto; height: 24px; }
+  .v-city { display: block; margin: 12px 0 16px; font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: 42px; line-height: 1; }
+  .v-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 14px; border-top: 2px dashed color-mix(in srgb, var(--ink) 18%, transparent); }
+  .v-meta .label { display: block; font-size: 9px; color: color-mix(in srgb, var(--ink) 55%, transparent); }
   .v-meta b { font-family: var(--mono); font-weight: 500; font-size: 14px; }
   .v-film {
-    position: absolute; inset: 0; border-radius: 14px; transform-origin: 0 100%;
-    background: linear-gradient(125deg, rgba(255, 255, 255, .75), rgba(216, 192, 138, .55) 45%, rgba(255, 255, 255, .6) 60%, rgba(216, 192, 138, .7));
-    box-shadow: -10px 10px 24px rgba(4, 11, 31, .25);
+    position: absolute; inset: 0; border-radius: var(--radius); transform-origin: 0 100%;
+    background: linear-gradient(125deg, rgba(255, 255, 255, .75), color-mix(in srgb, var(--gold) 55%, transparent) 45%, rgba(255, 255, 255, .6) 60%, color-mix(in srgb, var(--gold) 70%, transparent));
+    box-shadow: -10px 10px 24px color-mix(in srgb, var(--ink) 25%, transparent);
     transition: transform 1.4s var(--ease-out) .3s, opacity 1s .6s;
   }
   .live .v-film { transform: translate(40%, -70%) rotate(24deg); opacity: 0; }
@@ -141,8 +141,8 @@ const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120],
   .cb-row { opacity: 0; transform: translateY(14px); transition: opacity .6s, transform 1s var(--ease-out); }
   .live .cb-row { opacity: 1; transform: none; }
   .live .cb-row + .cb-row { transition-delay: .5s; }
-  .cb-total { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 1px solid rgba(243, 238, 228, .14); }
-  .cb-total .label { color: rgba(243, 238, 228, .65); }
+  .cb-total { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--cream) 14%, transparent); }
+  .cb-total .label { color: color-mix(in srgb, var(--cream) 65%, transparent); }
   .cb-total b { font-weight: 400; font-size: 54px; line-height: 1; }
 
   /* 4. group trip */
@@ -152,31 +152,31 @@ const thumb = { formats: ['avif', 'webp'] as ('avif' | 'webp')[], widths: [120],
   .live .g-avatars i { opacity: 1; transform: none; }
   .g-count { display: flex; align-items: baseline; gap: 12px; }
   .g-count b { font-weight: 400; font-size: 54px; line-height: 1; }
-  .g-count span { color: rgba(243, 238, 228, .7); }
+  .g-count span { color: color-mix(in srgb, var(--cream) 70%, transparent); }
 
   /* 5. chat */
-  .chat-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(243, 238, 228, .12); }
+  .chat-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--cream) 12%, transparent); }
   .chat-av { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--royal); }
   .chat-av img { width: auto; height: 22px; }
   .chat-head b { display: block; font-size: 14px; }
-  .chat-head span { font-size: 12px; color: rgba(243, 238, 228, .65); }
-  .msg { max-width: 82%; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: rgba(243, 238, 228, .14); font-size: 14px; line-height: 1.4; opacity: 0; transform: translateY(12px); transition: opacity .5s, transform .8s var(--ease-out); }
-  .msg.me { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: var(--gold); color: var(--ink); }
+  .chat-head span { font-size: 12px; color: color-mix(in srgb, var(--cream) 65%, transparent); }
+  .msg { max-width: 82%; padding: 10px 14px; border-radius: var(--radius) 16px 16px 4px; background: color-mix(in srgb, var(--cream) 14%, transparent); font-size: 14px; line-height: 1.4; opacity: 0; transform: translateY(12px); transition: opacity .5s, transform .8s var(--ease-out); }
+  .msg.me { align-self: flex-end; border-radius: var(--radius) 16px 4px 16px; background: var(--gold); color: var(--ink); }
   .live .msg { opacity: 1; transform: none; }
-  .typing { display: flex; gap: 5px; margin-top: auto; padding: 12px 14px; align-self: flex-start; border-radius: 16px; background: rgba(243, 238, 228, .1); }
-  .typing i { width: 6px; height: 6px; border-radius: 50%; background: rgba(243, 238, 228, .7); animation: blink 1.2s infinite; }
+  .typing { display: flex; gap: 5px; margin-top: auto; padding: 12px 14px; align-self: flex-start; border-radius: var(--radius); background: color-mix(in srgb, var(--cream) 10%, transparent); }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--cream) 70%, transparent); animation: blink 1.2s infinite; }
   .typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
   @keyframes blink { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
 
   /* 6. academy: the workshop ticket gets stamped */
-  .ws-ticket { position: relative; display: grid; grid-template-columns: 1fr auto; width: min(100%, 330px); border-radius: 14px; background: var(--cream); color: var(--ink); box-shadow: 0 30px 60px rgba(0, 0, 0, .4); }
-  .ws-ticket > div:first-child { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; border-right: 2px dashed rgba(4, 11, 31, .18); }
-  .ws-ticket .label { font-size: 9.5px; color: rgba(4, 11, 31, .6); }
-  .ws-ticket b { font-family: var(--serif); font-weight: 600; font-size: 26px; line-height: 1.05; }
-  .ws-ticket .num { font-size: 12px; color: rgba(4, 11, 31, .6); }
+  .ws-ticket { position: relative; display: grid; grid-template-columns: 1fr auto; width: min(100%, 330px); border-radius: var(--radius); background: var(--cream); color: var(--ink); box-shadow: 0 30px 60px rgba(0, 0, 0, .4); }
+  .ws-ticket > div:first-child { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; border-right: 2px dashed color-mix(in srgb, var(--ink) 18%, transparent); }
+  .ws-ticket .label { font-size: 9.5px; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  .ws-ticket b { font-family: var(--display); font-weight: 700; font-stretch: 112%; font-size: 26px; line-height: 1.05; }
+  .ws-ticket .num { font-size: 12px; color: color-mix(in srgb, var(--ink) 60%, transparent); }
   .ws-stub { display: grid; place-content: center; padding: 0 18px; text-align: center; font-size: 10px; letter-spacing: .14em; }
   .ws-stub b { font-family: var(--mono); font-size: 24px; font-weight: 500; }
-  .ws-stamp { position: absolute; right: 54px; top: 50%; padding: 6px 12px; border: 2px solid var(--royal); border-radius: 6px; color: var(--royal); font-family: var(--mono); font-size: 13px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: translateY(-50%) rotate(-14deg) scale(2.2); transition: transform .7s var(--ease-out) .8s, opacity .3s .8s; }
+  .ws-stamp { position: absolute; right: 54px; top: 50%; padding: 6px 12px; border: 2px solid var(--royal); border-radius: var(--radius); color: var(--royal); font-family: var(--mono); font-size: 13px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; transform: translateY(-50%) rotate(-14deg) scale(2.2); transition: transform .7s var(--ease-out) .8s, opacity .3s .8s; }
   .live .ws-stamp { opacity: .9; transform: translateY(-50%) rotate(-14deg) scale(1); }
 
   /* without JS everything is simply shown */
