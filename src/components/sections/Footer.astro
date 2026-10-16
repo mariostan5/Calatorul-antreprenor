@@ -6,7 +6,6 @@ const cols = [
   ['Oportunitate', [['Business Class', '/business-class'], ['Cum începi', '/#oportunitate'], ['Nota despre venituri', '/nota-venituri']]],
   ['Resurse', [['Academie', '/business-class#academie'], ['Webinar gratuit', config.webinarUrl], ['Galeria comunității', '/comunitate']]],
 ] as const;
-const legal = [['Termeni și condiții', '/termeni'], ['Confidențialitate', '/confidentialitate'], ['Cookies', '/cookies']] as const;
 const social = Object.entries(config.social);
 const c = config.company;
 ---
@@ -27,15 +26,6 @@ const c = config.company;
         <span class="foot-social">{social.map(([n, href]) => <a href={href} rel="noopener">{n}</a>)}</span>
       </div>
     </nav>
-  </div>
-  <div class="foot-legal">
-    <p>{c.name} · CUI {c.cui} · {c.regCom} · {c.address}</p>
-    <p class="foot-links">
-      {legal.map(([t, href]) => <a href={href}>{t}</a>)}
-      <a href="https://anpc.ro/" rel="noopener" target="_blank">ANPC</a>
-      <a href="https://anpc.ro/ce-este-sal/" rel="noopener" target="_blank">Soluționarea alternativă a litigiilor (SAL)</a>
-      <a href="https://consumer-redress.ec.europa.eu/" rel="noopener" target="_blank">Soluționarea online a litigiilor (SOL)</a>
-    </p>
   </div>
   <div class="foot-bottom label">
     <span>© {new Date().getFullYear()} Călătorul Antreprenor</span>
@@ -59,10 +49,6 @@ const c = config.company;
   .foot-social { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
   .foot-social a { font-family: var(--mono); font-size: 11px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--muted) !important; }
   .foot-social a:hover { color: var(--fg) !important; }
-  .foot-legal { display: flex; flex-direction: column; gap: 10px; padding: 24px var(--pad); border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
-  .foot-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .foot-links a { text-decoration: underline; text-underline-offset: 3px; }
-  .foot-links a:hover { color: var(--fg); }
   .foot-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px var(--pad); color: var(--muted); }
   @media (max-width: 980px) {
     .foot-top { grid-template-columns: 1fr; }
